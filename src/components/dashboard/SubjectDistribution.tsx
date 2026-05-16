@@ -91,7 +91,7 @@ export default function SubjectDistribution({ courses, totalXp }: SubjectDistrib
               
               {course.timeSpent !== undefined && course.timeSpent > 0 && (
                 <div className="mt-2 flex items-center gap-1.5 text-[11px] font-medium text-apple-gray6 dark:text-apple-dark6">
-                  <EmojiIcon symbol="⏱️" className="text-xs" />
+                  <EmojiIcon symbol="⏳" className="text-xs" />
                   <span>已投入约 {course.timeSpent} 分钟</span>
                 </div>
               )}

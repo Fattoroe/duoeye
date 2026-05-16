@@ -167,7 +167,7 @@ export default function LandingPreviewSection({
             dataKey="time"
             gradientId="landing-time-gradient"
             footer={`本周累计投入 ${totalTime} 分钟`}
-            icon={<EmojiIcon symbol="⏱️" className="text-base leading-none" tone="inherit" />}
+            icon={<EmojiIcon symbol="⏳" className="text-base leading-none" tone="inherit" />}
             sectionCardClassName={sectionCardClassName}
           />
         </div>

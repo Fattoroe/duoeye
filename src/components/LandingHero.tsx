@@ -18,6 +18,14 @@ import {
   resolveThemeMode,
   type ThemeMode,
 } from '../utils/theme';
+import {
+  SearchIcon,
+  BoltIcon,
+  ClockIcon,
+  BarChartIcon,
+  ArrowUpIcon,
+  QuestionIcon,
+} from './icons/CommonIcons';
 
 const USERNAME_STORAGE_KEY = 'duoeye_username';
 const USERDATA_STORAGE_KEY = 'duoeye_userdata';
@@ -175,73 +183,6 @@ function buildLandingHeatmapPreviewData() {
   return entries;
 }
 
-function SearchIcon({ className = 'w-5 h-5' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-3.5-3.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function BoltIcon({ className = 'w-5 h-5' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <path d="M13 2 5 13h5l-1 9 8-11h-5l1-9Z" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function ClockIcon({ className = 'w-5 h-5' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function BarChartIcon({ className = 'w-5 h-5' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <path d="M4 20V8" strokeLinecap="round" />
-      <path d="M10 20V4" strokeLinecap="round" />
-      <path d="M16 20v-6" strokeLinecap="round" />
-      <path d="M22 20v-9" strokeLinecap="round" />
-      <path d="M2 20h20" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function ArrowUpIcon({ className = 'w-5 h-5' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <path d="m12 5 6 6" strokeLinecap="round" />
-      <path d="m12 5-6 6" strokeLinecap="round" />
-      <path d="M12 5v14" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function SearchButtonSpinner() {
-  return (
-    <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
-      <path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" className="opacity-80" />
-    </svg>
-  );
-}
-
-function QuestionIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 2-3 4" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12 17h.01" strokeLinecap="round" />
-      <circle cx="12" cy="12" r="9" />
-    </svg>
-  );
-}
-
 function SparkleIcon({ className = 'h-4 w-4' }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
@@ -302,6 +243,22 @@ function ThemeCycleIcon({ resolvedTheme }: { resolvedTheme: ResolvedTheme }) {
   );
 }
 
+function MenuIcon({ open }: { open: boolean }) {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      {open ? (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m6 6 12 12M18 6 6 18" />
+      ) : (
+        <>
+          <path strokeLinecap="round" strokeWidth="1.8" d="M4 7h16" />
+          <path strokeLinecap="round" strokeWidth="1.8" d="M4 12h16" />
+          <path strokeLinecap="round" strokeWidth="1.8" d="M4 17h16" />
+        </>
+      )}
+    </svg>
+  );
+}
+
 function getNextThemeMode(mode: ThemeMode): ThemeMode {
   if (mode === 'light') return 'dark';
   if (mode === 'dark') return 'system';
@@ -326,22 +283,6 @@ function getNavbarActionIconClassName(variant: 'sparkle' | 'pause' | 'emoji'): s
   }
 
   return `${base} group-hover:-translate-y-0.5`;
-}
-
-function MenuIcon({ open }: { open: boolean }) {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      {open ? (
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m6 6 12 12M18 6 6 18" />
-      ) : (
-        <>
-          <path strokeLinecap="round" strokeWidth="1.8" d="M4 7h16" />
-          <path strokeLinecap="round" strokeWidth="1.8" d="M4 12h16" />
-          <path strokeLinecap="round" strokeWidth="1.8" d="M4 17h16" />
-        </>
-      )}
-    </svg>
-  );
 }
 
 function HeroMetric({

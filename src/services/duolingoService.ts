@@ -202,6 +202,8 @@ export function transformDuolingoData(rawData: DuolingoRawUser): UserData {
         if (subject === 'chess') title = '国际象棋';
         else if (subject === 'math') title = '数学';
         else if (subject === 'music') title = '音乐';
+      } else if (title === '国际象棋') {
+        title = 'Chess';
       }
 
       // Time spent extraction (from Ameba structure)
@@ -235,6 +237,7 @@ export function transformDuolingoData(rawData: DuolingoRawUser): UserData {
         if (subject === 'chess') title = '国际象棋';
         else if (subject === 'math') title = '数学';
         else if (subject === 'music') title = '音乐';
+        else if (title === '国际象棋') title = 'Chess';
 
         courses.push({
           title: title || c.learningLanguage,
@@ -285,7 +288,7 @@ export function transformDuolingoData(rawData: DuolingoRawUser): UserData {
         }
         return {
           id: langDetail.learning_language || langCode,
-          title: langDetail.language_string,
+          title: langDetail.language_string === '国际象棋' ? 'Chess' : langDetail.language_string,
           xp: langDetail.points || langDetail.level_progress || 0,
           crowns,
           fromLanguage: langDetail.from_language || 'en',
@@ -307,6 +310,9 @@ export function transformDuolingoData(rawData: DuolingoRawUser): UserData {
     learningLanguage = rawData.currentCourse.title;
   } else if (courses.length > 0) {
     learningLanguage = courses[0].title;
+  }
+  if (learningLanguage === '国际象棋') {
+    learningLanguage = 'Chess';
   }
 
   const xpByDate = new Map<string, number>();

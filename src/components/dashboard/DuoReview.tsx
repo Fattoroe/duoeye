@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { UserData } from '../../types';
 import EmojiIcon from '../icons/EmojiIcon';
 import DuoMascot from '../icons/DuoMascot';
+import { ChatIcon } from '../icons/CommonIcons';
 
 interface DuoReviewProps {
   userData: UserData;
@@ -52,8 +53,8 @@ export default function DuoReview({ userData }: DuoReviewProps) {
       <div className="relative flex-1 flex flex-col">
         <div className="mb-5 flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <div className="flex h-11 items-center justify-center text-[1.3rem] leading-none transition-transform duration-200 group-hover:scale-[1.03]">
-              <EmojiIcon symbol="🦉" className="text-[1.3rem] leading-none" />
+            <div className="flex h-11 w-11 items-center justify-center transition-transform duration-200 group-hover:scale-[1.03]">
+              <ChatIcon className="h-7 w-7" />
             </div>
             <div>
               <h2 className="text-lg font-semibold tracking-tight text-apple-dark1 dark:text-white">多儿点评</h2>

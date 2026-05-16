@@ -47,7 +47,7 @@ export default function TodayOverview({ userData }: TodayOverviewProps) {
       {
         label: '今日学习时间',
         value: formatMinutes(todayTimeMinutes),
-        icon: <EmojiIcon symbol="⏱" className="text-[2rem] leading-none" />,
+        icon: <EmojiIcon symbol="⏳" className="text-[2rem] leading-none" />,
         valueClass: 'text-[#1cb0f6]',
         panelClass: 'from-[#eef8ff] via-[#f6fbff] to-[#ffffff]',
         darkPanelClass: 'dark:from-[rgba(28,176,246,0.16)] dark:via-[rgba(58,58,60,0.96)] dark:to-[rgba(44,44,46,0.98)]',

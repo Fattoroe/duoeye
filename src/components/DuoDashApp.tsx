@@ -310,7 +310,7 @@ function DashboardSections({
             </DashboardCard>
 
             <DashboardCard
-              icon={<EmojiIcon symbol="⏱" className="text-[1.35rem] leading-none" />}
+              icon={<EmojiIcon symbol="⏳" className="text-[1.35rem] leading-none" />}
               title="本周学习时间"
               subtitle={weeklyTimeRangeMode === 'week' ? '查看本周每日学习投入' : '查看最近 7 天的学习投入'}
               glowClassName="bg-[radial-gradient(circle_at_top_left,rgba(28,176,246,0.14),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.08),transparent_48%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(28,176,246,0.2),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(56,189,248,0.14),transparent_46%)]"
@@ -1119,7 +1119,7 @@ export default function DuoDashApp({
               <DuoWordmark size="xs" className="shrink-0 overflow-visible" />
             </div>
             <p className="mt-4 w-full max-w-[760px] text-sm leading-7 text-apple-gray6 dark:text-apple-dark6">
-              多邻国学习数据可视化工具。输入用户名，快速生成和首页一致风格的数据仪表盘。
+              多邻国学习数据可视化工具。
             </p>
             <p className="mt-6 text-xs text-apple-gray6/80 dark:text-apple-dark6/80">
               © {new Date().getFullYear()} DuoEye · 非官方第三方工具
