@@ -613,10 +613,40 @@ export default function DuoDashApp({
     applyResolvedTheme(initialResolvedTheme);
     bootstrap();
 
+    const returnToHome = () => {
+      // 立即清除存储，确保返回首页时状态已重置
+      sessionStorage.removeItem(USERNAME_STORAGE_KEY);
+      sessionStorage.removeItem(USERDATA_STORAGE_KEY);
+      sessionStorage.removeItem(LAST_LOADED_AT_STORAGE_KEY);
+      localStorage.removeItem(USERNAME_STORAGE_KEY);
+      localStorage.removeItem(USERDATA_STORAGE_KEY);
+      localStorage.removeItem(LAST_LOADED_AT_STORAGE_KEY);
+      window.location.href = '/';
+    };
+
+    const handleGlobalKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        returnToHome();
+      }
+    };
+
+    const handlePopState = () => {
+      // 处理物理返回键
+      returnToHome();
+    };
+
+    // 使用 capture: true 确保在捕获阶段就能截获事件，提高灵敏度
+    window.addEventListener('keydown', handleGlobalKeyDown, true);
+    window.addEventListener('popstate', handlePopState);
+
     return () => {
       isCancelled = true;
       controller.abort();
       window.clearTimeout(timer);
+      window.removeEventListener('keydown', handleGlobalKeyDown, true);
+      window.removeEventListener('popstate', handlePopState);
     };
   }, []);
 

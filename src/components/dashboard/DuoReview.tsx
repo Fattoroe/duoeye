@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { UserData } from '../../types';
 import EmojiIcon from '../icons/EmojiIcon';
+import DuoMascot from '../icons/DuoMascot';
 
 interface DuoReviewProps {
   userData: UserData;
@@ -73,32 +74,40 @@ export default function DuoReview({ userData }: DuoReviewProps) {
           </span>
         </div>
 
-        <div className="screenshot-solid-panel relative min-h-[136px] flex-1 rounded-[24px] border border-white/70 bg-white/88 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] transition-colors duration-200 group-hover:border-white/90 group-hover:bg-white/92 dark:border-transparent dark:[background-clip:border-box] dark:bg-white/6 dark:shadow-none dark:group-hover:bg-white/8">
-          {error ? (
-            <div className="space-y-3">
-              <p className="text-sm leading-7 text-apple-gray6 dark:text-apple-dark6">{error}</p>
-              <button
-                onClick={fetchAnalysis}
-                className="inline-flex items-center rounded-full border border-black/5 bg-white px-4 py-2 text-sm font-semibold text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/8 dark:text-white"
-              >
-                重试
-              </button>
+        <div className="screenshot-solid-panel relative min-h-[160px] flex-1 flex flex-row items-start gap-5 rounded-[24px] border border-white/70 bg-white/88 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] transition-colors duration-200 group-hover:border-white/90 group-hover:bg-white/92 dark:border-transparent dark:[background-clip:border-box] dark:bg-white/6 dark:shadow-none dark:group-hover:bg-white/8">
+          <div className="flex-shrink-0">
+            <div className="flex h-24 w-20 items-center justify-center rounded-[22px] border border-black/[0.03] bg-white p-2 shadow-[0_6px_16px_rgba(15,23,42,0.05)] dark:border-white/10 dark:bg-white/10 dark:shadow-none">
+              <DuoMascot className={`h-16 w-16 ${loading ? 'animate-bounce' : ''}`} />
             </div>
-          ) : (
-            <>
-              <p className={`text-sm leading-7 text-apple-dark1 transition-opacity duration-200 dark:text-white/90 ${loading ? 'opacity-0' : 'opacity-100'}`}>
-                {analysis || '暂时还没有可展示的点评。'}
-              </p>
+          </div>
 
-              {loading ? (
-                <div className="absolute inset-4 flex flex-col justify-center gap-3 animate-pulse">
-                  <div className="h-4 w-2/3 rounded-full bg-black/5 dark:bg-white/10" />
-                  <div className="h-4 w-full rounded-full bg-black/5 dark:bg-white/10" />
-                  <div className="h-4 w-5/6 rounded-full bg-black/5 dark:bg-white/10" />
-                </div>
-              ) : null}
-            </>
-          )}
+          <div className="flex-1 min-w-0">
+            {error ? (
+              <div className="space-y-3">
+                <p className="text-sm leading-7 text-apple-gray6 dark:text-apple-dark6">{error}</p>
+                <button
+                  onClick={fetchAnalysis}
+                  className="inline-flex items-center rounded-full border border-black/5 bg-white px-4 py-2 text-sm font-semibold text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/8 dark:text-white"
+                >
+                  重试
+                </button>
+              </div>
+            ) : (
+              <div className="relative">
+                <p className={`text-sm leading-7 text-apple-dark1 transition-opacity duration-200 dark:text-white/90 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+                  {analysis || '暂时还没有可展示的点评。'}
+                </p>
+
+                {loading ? (
+                  <div className="absolute inset-0 flex flex-col justify-center gap-3 animate-pulse">
+                    <div className="h-4 w-2/3 rounded-full bg-black/5 dark:bg-white/10" />
+                    <div className="h-4 w-full rounded-full bg-black/5 dark:bg-white/10" />
+                    <div className="h-4 w-5/6 rounded-full bg-black/5 dark:bg-white/10" />
+                  </div>
+                ) : null}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="mt-5 flex justify-end">
