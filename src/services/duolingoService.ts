@@ -8,16 +8,27 @@ const LEAGUE_TIERS = [
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 const DEFAULT_TIMEZONE = 'Asia/Shanghai';
 
+const formatters = {
+  localDate: new Map<string, Intl.DateTimeFormat>(),
+  startOfDay: new Map<string, Intl.DateTimeFormat>(),
+  monday: new Map<string, Intl.DateTimeFormat>(),
+};
+
 function toLocalDateKey(date: Date, timeZone: string = DEFAULT_TIMEZONE): string {
   if (!date || isNaN(date.getTime())) return '1970-01-01';
 
   try {
-    return new Intl.DateTimeFormat('en-CA', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      timeZone
-    }).format(date);
+    let formatter = formatters.localDate.get(timeZone);
+    if (!formatter) {
+      formatter = new Intl.DateTimeFormat('en-CA', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        timeZone
+      });
+      formatters.localDate.set(timeZone, formatter);
+    }
+    return formatter.format(date);
   } catch (e) {
     const offsetDate = new Date(date.getTime() + (timeZone === 'Asia/Shanghai' ? 8 : 0) * 3600000);
     return offsetDate.toISOString().split('T')[0];
@@ -26,10 +37,14 @@ function toLocalDateKey(date: Date, timeZone: string = DEFAULT_TIMEZONE): string
 
 function getStartOfDayInTimezone(date: Date, timeZone: string = DEFAULT_TIMEZONE): number {
   const dateKey = toLocalDateKey(date, timeZone);
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    timeZone,
-    timeZoneName: 'shortOffset'
-  });
+  let formatter = formatters.startOfDay.get(timeZone);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      timeZoneName: 'shortOffset'
+    });
+    formatters.startOfDay.set(timeZone, formatter);
+  }
   const parts = formatter.formatToParts(date);
   const offsetPart = parts.find(p => p.type === 'timeZoneName')?.value || '+08:00';
   const offsetMatch = offsetPart.match(/GMT([+-])(\d+)(?::(\d+))?/);
@@ -52,13 +67,17 @@ function parseSummaryDateKey(date: number | string): string | null {
 }
 
 function getMonday(date: Date, timeZone: string = DEFAULT_TIMEZONE): Date {
-  const formatter = new Intl.DateTimeFormat('en-CA', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    weekday: 'short',
-    timeZone
-  });
+  let formatter = formatters.monday.get(timeZone);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      weekday: 'short',
+      timeZone
+    });
+    formatters.monday.set(timeZone, formatter);
+  }
 
   const parts = formatter.formatToParts(date);
   const year = parseInt(parts.find(p => p.type === 'year')?.value || '2024');

@@ -271,14 +271,14 @@ export default function Navbar({
     };
   }, []);
 
-  const formattedLastLoadedAt = lastLoadedAt
-    ? new Intl.DateTimeFormat('zh-CN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      }).format(lastLoadedAt)
-    : '';
+const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+});
+
+  const formattedLastLoadedAt = lastLoadedAt ? timeFormatter.format(lastLoadedAt) : '';
 
   return (
     <nav data-floating-navbar="true" className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8">

@@ -32,14 +32,16 @@ interface HeatmapDay {
 const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
 
+const dateTimeFormatter = new Intl.DateTimeFormat('en-CA', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  timeZone: 'Asia/Shanghai',
+});
+
 function toLocalDateStr(date: Date): string {
   try {
-    return new Intl.DateTimeFormat('en-CA', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      timeZone: 'Asia/Shanghai',
-    }).format(date);
+    return dateTimeFormatter.format(date);
   } catch {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   }

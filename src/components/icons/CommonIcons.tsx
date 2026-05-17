@@ -299,18 +299,14 @@ export function BarChartIcon({ className = 'h-4 w-4' }: IconProps) {
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
       <defs>
         <PlasticFilter id={`${id}-p`} />
-        <linearGradient id={`${id}-g`} x1="4" y1="4" x2="20" y2="20">
-          <stop stopColor="#A572F7" />
-          <stop offset="1" stopColor="#8E44AD" />
-        </linearGradient>
       </defs>
-      <g filter={`url(#${id}-p)`} stroke={`url(#${id}-g)`} strokeWidth="2.5" strokeLinecap="round">
-        <path d="M4 20V8" />
-        <path d="M10 20V4" />
-        <path d="M16 20v-6" />
-        <path d="M22 20v-9" />
-        <path d="M2 20h20" />
-      </g>
+      <path
+        filter={`url(#${id}-p)`}
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        d="M4 20V8 M10 20V4 M16 20v-6 M22 20v-9 M2 20h20"
+      />
     </svg>
   );
 }
