@@ -142,6 +142,20 @@ const { title } = Astro.props;
     font: inherit;
   }
 
+  .chart-shell {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .chart-shell :focus:not(:focus-visible) {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .chart-shell :focus-visible {
+    outline: 2px solid rgba(28, 176, 246, 0.32) !important;
+    outline-offset: 2px;
+  }
+
   .render-isolate {
     contain: layout;
     isolation: isolate;

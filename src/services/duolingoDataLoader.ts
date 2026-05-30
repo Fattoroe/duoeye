@@ -1,7 +1,8 @@
 import type { UserData } from '../types';
 import { transformDuolingoData } from './duolingoService';
+import { DEFAULT_TIMEZONE, getDateKeyInTimeZone, sanitizeTimeZone } from '../utils/timezone';
 
-const CACHE = new Map<string, { data: UserData; timestamp: number }>();
+const CACHE = new Map<string, { data: UserData; timestamp: number; dayKey: string }>();
 const CACHE_TTL = 5 * 60 * 1000;
 const CACHE_MAX_ENTRIES = 200;
 const DUOLINGO_BASE_URL = 'https://www.duolingo.com';
@@ -79,8 +80,12 @@ export function isValidUsername(username: string): boolean {
   return /^[a-zA-Z0-9_.-]{1,64}$/.test(username);
 }
 
-export async function getDuolingoUserData(rawUsername: unknown): Promise<UserData> {
+export async function getDuolingoUserData(
+  rawUsername: unknown,
+  options: { timeZone?: string } = {},
+): Promise<UserData> {
   const username = normalizeUsername(rawUsername);
+  const timeZone = sanitizeTimeZone(options.timeZone || DEFAULT_TIMEZONE);
   if (!username) {
     throw new DuolingoDataError('Username is required', 400);
   }
@@ -89,12 +94,13 @@ export async function getDuolingoUserData(rawUsername: unknown): Promise<UserDat
     throw new DuolingoDataError('用户名格式无效', 400);
   }
 
-  const cacheKey = username.toLowerCase();
+  const cacheKey = `${username.toLowerCase()}::${timeZone}`;
   const now = Date.now();
+  const currentDayKey = getDateKeyInTimeZone(now, timeZone);
   pruneCache(now);
 
   const cached = CACHE.get(cacheKey);
-  if (cached && now - cached.timestamp < CACHE_TTL) {
+  if (cached && now - cached.timestamp < CACHE_TTL && cached.dayKey === currentDayKey) {
     return cached.data;
   }
 
@@ -202,8 +208,8 @@ export async function getDuolingoUserData(rawUsername: unknown): Promise<UserDat
     throw new DuolingoDataError('数据格式异常', 502);
   }
 
-  const transformed = transformDuolingoData(userData);
+  const transformed = transformDuolingoData(userData, timeZone);
   pruneCache(now);
-  CACHE.set(cacheKey, { data: transformed, timestamp: now });
+  CACHE.set(cacheKey, { data: transformed, timestamp: now, dayKey: currentDayKey });
   return transformed;
 }

@@ -194,6 +194,15 @@ function SparkleIcon({ className = 'h-4 w-4' }: { className?: string }) {
   );
 }
 
+function SearchButtonSpinner() {
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+    />
+  );
+}
+
 function PauseIcon({ className = 'h-4 w-4' }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

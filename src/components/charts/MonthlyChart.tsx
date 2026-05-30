@@ -111,7 +111,7 @@ export default function MonthlyChart({ data, selectedYear, viewMode = 'year' }: 
   }
 
   return (
-    <div ref={containerRef} className="h-full min-h-[220px] w-full">
+    <div ref={containerRef} className="chart-shell h-full min-h-[220px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
           <defs>
@@ -142,8 +142,8 @@ export default function MonthlyChart({ data, selectedYear, viewMode = 'year' }: 
               const entry = payload?.[0]?.payload as MonthlyChartPoint | undefined;
               return entry?.date || '';
             }}
-            formatter={(value: number) => [
-              `${value.toLocaleString()} XP`,
+            formatter={(value) => [
+              `${Number(value ?? 0).toLocaleString()} XP`,
               viewMode === 'rolling12' ? '最近 12 个月' : (selectedYear || '当年'),
             ]}
             contentStyle={{

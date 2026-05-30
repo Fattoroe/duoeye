@@ -73,7 +73,7 @@ function PreviewChartCard({
   sectionCardClassName: string;
 }) {
   return (
-    <div className={`${sectionCardClassName} h-full p-6`}>
+    <div className={`${sectionCardClassName} chart-shell h-full p-6`}>
       <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-apple-dark1 dark:text-white">
         <span className="text-base leading-none" style={{ color }}>
           {icon}

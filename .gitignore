@@ -25,6 +25,7 @@ npm-debug.log*
 
 # Cache
 .astro/
+.astro-cache/
 .vercel/
 
 # Local agent instructions

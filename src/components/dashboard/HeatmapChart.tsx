@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { DuoColors } from '../../styles/duolingoColors';
+import { getBrowserTimeZone, getDateKeyInTimeZone } from '../../utils/timezone';
 
 interface HeatmapChartProps {
   data: { date: string; xp: number; time?: number }[];
@@ -32,19 +33,8 @@ interface HeatmapDay {
 const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
 
-const dateTimeFormatter = new Intl.DateTimeFormat('en-CA', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  timeZone: 'Asia/Shanghai',
-});
-
-function toLocalDateStr(date: Date): string {
-  try {
-    return dateTimeFormatter.format(date);
-  } catch {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-  }
+function toLocalDateStr(date: Date, timeZone: string): string {
+  return getDateKeyInTimeZone(date, timeZone);
 }
 
 function getHeatmapColor(xp: number, maxXp: number): string {
@@ -71,6 +61,7 @@ export default function HeatmapChart({
   controlOrder = 'dashboard',
 }: HeatmapChartProps) {
   const now = new Date();
+  const timeZone = getBrowserTimeZone();
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
   const [selectedQuarter, setSelectedQuarter] = useState(Math.ceil((now.getMonth() + 1) / 3));
@@ -90,7 +81,7 @@ export default function HeatmapChart({
   useEffect(() => {
     if (forceViewMode) return;
 
-    let resizeTimer: ReturnType<typeof setTimeout>;
+    let resizeTimer: number | null = null;
 
     function applyResponsiveMode(): void {
       const width = window.innerWidth;
@@ -109,7 +100,9 @@ export default function HeatmapChart({
     }
 
     function handleResize(): void {
-      window.clearTimeout(resizeTimer);
+      if (resizeTimer !== null) {
+        window.clearTimeout(resizeTimer);
+      }
       resizeTimer = window.setTimeout(applyResponsiveMode, 150);
     }
 
@@ -118,7 +111,9 @@ export default function HeatmapChart({
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.clearTimeout(resizeTimer);
+      if (resizeTimer !== null) {
+        window.clearTimeout(resizeTimer);
+      }
     };
   }, [forceViewMode]);
 
@@ -182,7 +177,7 @@ export default function HeatmapChart({
     const cursor = new Date(startDate);
 
     while (cursor <= endDate) {
-      const dateStr = toLocalDateStr(cursor);
+      const dateStr = toLocalDateStr(cursor, timeZone);
       dates.push({
         date: new Date(cursor),
         dateStr,
@@ -242,7 +237,7 @@ export default function HeatmapChart({
       monthLabels: labels,
       maxXp: calculatedMaxXp,
     };
-  }, [selectedHalf, selectedQuarter, selectedYear, timeMap, viewMode, xpMap]);
+  }, [selectedHalf, selectedQuarter, selectedYear, timeMap, timeZone, viewMode, xpMap]);
 
   const totalXp = useMemo(() => allDates.reduce((sum, item) => sum + Math.max(item.xp, 0), 0), [allDates]);
   const activeDays = useMemo(() => allDates.filter((item) => item.xp > 0).length, [allDates]);
@@ -316,7 +311,7 @@ export default function HeatmapChart({
 
     const nextDate = new Date(`${tooltip.date}T12:00:00`);
     nextDate.setDate(nextDate.getDate() + direction);
-    const nextDateStr = toLocalDateStr(nextDate);
+    const nextDateStr = toLocalDateStr(nextDate, timeZone);
 
     return allDates.some((item) => item.dateStr === nextDateStr);
   }
@@ -326,7 +321,7 @@ export default function HeatmapChart({
 
     const nextDate = new Date(`${tooltip.date}T12:00:00`);
     nextDate.setDate(nextDate.getDate() + direction);
-    const nextDateStr = toLocalDateStr(nextDate);
+    const nextDateStr = toLocalDateStr(nextDate, timeZone);
     const nextDay = allDates.find((item) => item.dateStr === nextDateStr);
     if (!nextDay) return;
 

@@ -23,7 +23,7 @@ export default function WeeklyTimeChart({ data }: WeeklyTimeChartProps) {
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col">
+    <div className="chart-shell flex h-full min-h-0 w-full flex-col">
       <div className="min-h-[180px] flex-1">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>

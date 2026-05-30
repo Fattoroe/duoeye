@@ -7,25 +7,27 @@ interface MonthlyTimeChartProps {
 
 export default function MonthlyTimeChart({ data }: MonthlyTimeChartProps) {
   const monthlyData = useMemo(() => {
-    const monthMap = new Map<string, number>();
+    const monthMap = new Map<string, { date: string; time: number }>();
     const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
     const today = new Date();
     
     for (let i = 11; i >= 0; i--) {
       const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
       const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      monthMap.set(months[d.getMonth()], 0);
+      monthMap.set(monthKey, { date: months[d.getMonth()], time: 0 });
     }
     
     data.forEach(item => {
-      const d = new Date(item.date);
-      const monthKey = months[d.getMonth()];
-      if (monthMap.has(monthKey)) {
-        monthMap.set(monthKey, (monthMap.get(monthKey) || 0) + (item.time || 0));
-      }
+      const monthKey = item.date.slice(0, 7);
+      const current = monthMap.get(monthKey);
+      if (!current) return;
+      monthMap.set(monthKey, {
+        ...current,
+        time: current.time + (item.time || 0),
+      });
     });
 
-    return Array.from(monthMap.entries()).map(([date, time]) => ({ date, time }));
+    return Array.from(monthMap.values());
   }, [data]);
 
   const totalTime = useMemo(() => {
@@ -41,7 +43,7 @@ export default function MonthlyTimeChart({ data }: MonthlyTimeChartProps) {
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
 
   return (
-    <div className="w-full">
+    <div className="chart-shell w-full">
       <div className="h-28 w-full">
         <ResponsiveContainer width="100%" height={112}>
           <AreaChart data={monthlyData} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
@@ -73,7 +75,7 @@ export default function MonthlyTimeChart({ data }: MonthlyTimeChartProps) {
                 boxShadow: isDark ? '0 10px 24px rgba(0,0,0,0.45)' : '0 4px 12px rgba(0,0,0,0.1)',
                 backgroundColor: isDark ? '#0f172a' : '#ffffff',
               }}
-              formatter={(value: number) => [`${value} 分钟`, '学习时间']}
+              formatter={(value) => [`${Number(value ?? 0)} 分钟`, '学习时间']}
             />
             <Area
               type="monotone"

@@ -31,10 +31,12 @@ import {
   resolveThemeMode,
   type ThemeMode,
 } from '../utils/theme';
+import { getBrowserTimeZone, isSameTimeZoneDay } from '../utils/timezone';
 
 const USERNAME_STORAGE_KEY = 'duoeye_username';
 const USERDATA_STORAGE_KEY = 'duoeye_userdata';
 const LAST_LOADED_AT_STORAGE_KEY = 'duoeye_last_loaded_at';
+const LAST_TIMEZONE_STORAGE_KEY = 'duoeye_last_timezone';
 const MAX_SCREENSHOT_BYTES = 10 * 1024 * 1024;
 const MAX_SCREENSHOT_CANVAS_PIXELS = 12_000_000;
 const SCREENSHOT_BASE_PIXEL_RATIO = 1.6;
@@ -53,6 +55,15 @@ function readStoredLoadedAt(): number | null {
   const parsedValue = Number(rawValue);
   if (!Number.isFinite(parsedValue) || parsedValue <= 0) return null;
   return parsedValue;
+}
+
+function readStoredTimeZone(): string | null {
+  if (typeof window === 'undefined') return null;
+
+  return (
+    window.sessionStorage.getItem(LAST_TIMEZONE_STORAGE_KEY) ||
+    window.localStorage.getItem(LAST_TIMEZONE_STORAGE_KEY)
+  );
 }
 
 interface DuoDashAppProps {
@@ -473,11 +484,14 @@ export default function DuoDashApp({
   }
 
   function persistDashboardState(nextUserData: UserData, loadedAt = Date.now()): void {
+    const timeZone = getBrowserTimeZone();
     applyDashboardState(nextUserData, loadedAt);
     sessionStorage.setItem(USERDATA_STORAGE_KEY, JSON.stringify(nextUserData));
     localStorage.setItem(USERDATA_STORAGE_KEY, JSON.stringify(nextUserData));
     sessionStorage.setItem(LAST_LOADED_AT_STORAGE_KEY, String(loadedAt));
     localStorage.setItem(LAST_LOADED_AT_STORAGE_KEY, String(loadedAt));
+    sessionStorage.setItem(LAST_TIMEZONE_STORAGE_KEY, timeZone);
+    localStorage.setItem(LAST_TIMEZONE_STORAGE_KEY, timeZone);
   }
 
   function clearStoredDashboardState(): void {
@@ -485,12 +499,18 @@ export default function DuoDashApp({
     localStorage.removeItem(USERDATA_STORAGE_KEY);
     sessionStorage.removeItem(LAST_LOADED_AT_STORAGE_KEY);
     localStorage.removeItem(LAST_LOADED_AT_STORAGE_KEY);
+    sessionStorage.removeItem(LAST_TIMEZONE_STORAGE_KEY);
+    localStorage.removeItem(LAST_TIMEZONE_STORAGE_KEY);
   }
 
   async function fetchDashboardData(activeUsername: string, signal?: AbortSignal): Promise<UserData> {
+    const timeZone = getBrowserTimeZone();
     const response = await fetch(`/api/data?username=${encodeURIComponent(activeUsername)}`, {
       method: 'GET',
-      headers: { Accept: 'application/json' },
+      headers: {
+        Accept: 'application/json',
+        'x-user-timezone': timeZone,
+      },
       signal,
     });
 
@@ -530,9 +550,16 @@ export default function DuoDashApp({
       const sessionUsername = sessionStorage.getItem(USERNAME_STORAGE_KEY)?.trim() || localStorage.getItem(USERNAME_STORAGE_KEY)?.trim() || '';
       const storedUsername = sessionUsername || localStorage.getItem(USERNAME_STORAGE_KEY)?.trim() || '';
       const activeUsername = urlUsername || storedUsername;
+      const activeTimeZone = getBrowserTimeZone();
       const sessionUserData = sessionStorage.getItem(USERDATA_STORAGE_KEY);
       const localUserData = localStorage.getItem(USERDATA_STORAGE_KEY);
       const storedUserData = sessionUserData || localUserData;
+      const storedLoadedAt = readStoredLoadedAt();
+      const storedTimeZone = readStoredTimeZone();
+      const isStoredStateFresh =
+        !!storedLoadedAt &&
+        storedTimeZone === activeTimeZone &&
+        isSameTimeZoneDay(storedLoadedAt, Date.now(), activeTimeZone);
       const hasServerData = Boolean(initialUserData);
       const hasServerError = Boolean(initialLoadError);
 
@@ -561,16 +588,18 @@ export default function DuoDashApp({
         return;
       }
 
-      if (storedUserData && (!urlUsername || urlUsername === storedUsername)) {
+      if (storedUserData && isStoredStateFresh && (!urlUsername || urlUsername === storedUsername)) {
         try {
           if (isCancelled) return;
 
-          applyDashboardState(JSON.parse(storedUserData), readStoredLoadedAt());
+          applyDashboardState(JSON.parse(storedUserData), storedLoadedAt);
           setLoading(false);
           return;
         } catch {
           clearStoredDashboardState();
         }
+      } else if (storedUserData && !isStoredStateFresh) {
+        clearStoredDashboardState();
       }
 
       if (!activeUsername) {
@@ -618,9 +647,11 @@ export default function DuoDashApp({
       sessionStorage.removeItem(USERNAME_STORAGE_KEY);
       sessionStorage.removeItem(USERDATA_STORAGE_KEY);
       sessionStorage.removeItem(LAST_LOADED_AT_STORAGE_KEY);
+      sessionStorage.removeItem(LAST_TIMEZONE_STORAGE_KEY);
       localStorage.removeItem(USERNAME_STORAGE_KEY);
       localStorage.removeItem(USERDATA_STORAGE_KEY);
       localStorage.removeItem(LAST_LOADED_AT_STORAGE_KEY);
+      localStorage.removeItem(LAST_TIMEZONE_STORAGE_KEY);
       window.location.href = '/';
     };
 
@@ -1086,9 +1117,11 @@ export default function DuoDashApp({
               sessionStorage.removeItem(USERNAME_STORAGE_KEY);
               sessionStorage.removeItem(USERDATA_STORAGE_KEY);
               sessionStorage.removeItem(LAST_LOADED_AT_STORAGE_KEY);
+              sessionStorage.removeItem(LAST_TIMEZONE_STORAGE_KEY);
               localStorage.removeItem(USERNAME_STORAGE_KEY);
               localStorage.removeItem(USERDATA_STORAGE_KEY);
               localStorage.removeItem(LAST_LOADED_AT_STORAGE_KEY);
+              localStorage.removeItem(LAST_TIMEZONE_STORAGE_KEY);
               window.location.assign('/');
             }}
           />
