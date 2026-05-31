@@ -3,6 +3,7 @@ node_modules/
 
 # Build output
 dist/
+dist-broken-test/
 
 # Environment variables
 .env

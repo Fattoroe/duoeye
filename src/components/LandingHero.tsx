@@ -1,8 +1,8 @@
 import { Suspense, lazy, startTransition, useEffect, useRef, useState } from 'react';
 import { navigate } from 'astro:transitions/client';
-import AppIcon from './AppIcon';
-import DuoWordmark from './DuoWordmark';
-import ThemeModeControl from './ThemeModeControl';
+import AppIcon from './shared/AppIcon';
+import DuoWordmark from './shared/DuoWordmark';
+import ThemeModeControl from './shared/ThemeModeControl';
 import EmojiIcon from './icons/EmojiIcon';
 import {
   EmojiModeProvider,
@@ -19,7 +19,13 @@ import {
   type ThemeMode,
 } from '../utils/theme';
 import {
+  EmojiModeIcon,
+  MenuIcon,
+  MoonIcon,
+  PauseIcon,
   SearchIcon,
+  SparkleIcon,
+  SunIcon,
   BoltIcon,
   ClockIcon,
   BarChartIcon,
@@ -185,15 +191,6 @@ function buildLandingHeatmapPreviewData() {
   return entries;
 }
 
-function SparkleIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="m12 3 1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3Z" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="m18.5 15 0.9 2.6L22 18.5l-2.6 0.9-0.9 2.6-0.9-2.6-2.6-0.9 2.6-0.9 0.9-2.6Z" />
-    </svg>
-  );
-}
-
 function SearchButtonSpinner() {
   return (
     <span
@@ -203,71 +200,12 @@ function SearchButtonSpinner() {
   );
 }
 
-function PauseIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <rect x="6" y="5" width="4" height="14" rx="1.2" />
-      <rect x="14" y="5" width="4" height="14" rx="1.2" />
-    </svg>
-  );
-}
-
-function EmojiModeIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <>
-      <svg className={`${className} duo-emoji-native`} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-        <circle cx="12" cy="12" r="8" strokeWidth="1.8" />
-        <circle cx="9" cy="10" r="1" fill="currentColor" stroke="none" />
-        <circle cx="15" cy="10" r="1" fill="currentColor" stroke="none" />
-        <path d="M8.5 14c.9 1.2 2.1 1.8 3.5 1.8s2.6-.6 3.5-1.8" strokeWidth="1.8" strokeLinecap="round" />
-      </svg>
-      <svg className={`${className} duo-emoji-svg`} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-        <rect x="4" y="4" width="6" height="6" rx="1.5" strokeWidth="1.8" />
-        <circle cx="17" cy="7" r="3" strokeWidth="1.8" />
-        <path d="m8 15 3 5 3-5 3 5 3-5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </>
-  );
-}
-
 function ThemeCycleIcon({ resolvedTheme }: { resolvedTheme: ResolvedTheme }) {
   if (resolvedTheme === 'dark') {
-    return (
-      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
-      </svg>
-    );
+    return <MoonIcon className="h-4 w-4" />;
   }
 
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <circle cx="12" cy="12" r="4" strokeWidth="1.8" />
-      <path strokeLinecap="round" strokeWidth="1.8" d="M12 2.5V5" />
-      <path strokeLinecap="round" strokeWidth="1.8" d="M12 19v2.5" />
-      <path strokeLinecap="round" strokeWidth="1.8" d="M4.93 4.93 6.7 6.7" />
-      <path strokeLinecap="round" strokeWidth="1.8" d="m17.3 17.3 1.77 1.77" />
-      <path strokeLinecap="round" strokeWidth="1.8" d="M2.5 12H5" />
-      <path strokeLinecap="round" strokeWidth="1.8" d="M19 12h2.5" />
-      <path strokeLinecap="round" strokeWidth="1.8" d="m4.93 19.07 1.77-1.77" />
-      <path strokeLinecap="round" strokeWidth="1.8" d="m17.3 6.7 1.77-1.77" />
-    </svg>
-  );
-}
-
-function MenuIcon({ open }: { open: boolean }) {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      {open ? (
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="m6 6 12 12M18 6 6 18" />
-      ) : (
-        <>
-          <path strokeLinecap="round" strokeWidth="1.8" d="M4 7h16" />
-          <path strokeLinecap="round" strokeWidth="1.8" d="M4 12h16" />
-          <path strokeLinecap="round" strokeWidth="1.8" d="M4 17h16" />
-        </>
-      )}
-    </svg>
-  );
+  return <SunIcon className="h-4 w-4" />;
 }
 
 function getNextThemeMode(mode: ThemeMode): ThemeMode {

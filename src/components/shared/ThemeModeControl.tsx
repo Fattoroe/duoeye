@@ -1,4 +1,5 @@
-import type { ResolvedTheme, ThemeMode } from '../utils/theme';
+import type { ResolvedTheme, ThemeMode } from '../../utils/theme';
+import { MoonIcon, SunIcon, SystemIcon } from '../icons/CommonIcons';
 
 interface ThemeModeControlProps {
   mode: ThemeMode;
@@ -8,40 +9,6 @@ interface ThemeModeControlProps {
 
 const shellClassName =
   'flex h-11 items-center gap-1 rounded-2xl border border-black/5 bg-white/88 p-1 text-apple-gray6 shadow-[0_6px_14px_rgba(15,23,42,0.04)] dark:border-white/15 dark:bg-white/12 dark:text-white/72';
-
-function SunIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2.5" strokeLinecap="round" />
-      <path d="M12 19.5V22" strokeLinecap="round" />
-      <path d="M4.93 4.93 6.7 6.7" strokeLinecap="round" />
-      <path d="m17.3 17.3 1.77 1.77" strokeLinecap="round" />
-      <path d="M2 12h2.5" strokeLinecap="round" />
-      <path d="M19.5 12H22" strokeLinecap="round" />
-      <path d="m4.93 19.07 1.77-1.77" strokeLinecap="round" />
-      <path d="m17.3 6.7 1.77-1.77" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function MoonIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function SystemIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} aria-hidden="true">
-      <rect x="3" y="4" width="18" height="12" rx="2" />
-      <path d="M8 20h8" strokeLinecap="round" />
-      <path d="M12 16v4" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function getOptionClassName(active: boolean) {
   if (active) {

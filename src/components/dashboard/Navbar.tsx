@@ -1,9 +1,21 @@
 import { startTransition, useEffect, useRef, useState } from 'react';
-import AppIcon from '../AppIcon';
-import DuoWordmark from '../DuoWordmark';
-import ThemeModeControl from '../ThemeModeControl';
+import AppIcon from '../shared/AppIcon';
+import DuoWordmark from '../shared/DuoWordmark';
+import ThemeModeControl from '../shared/ThemeModeControl';
 import type { EmojiIconMode } from '../icons/EmojiMode';
 import type { ResolvedTheme, ThemeMode } from '../../utils/theme';
+import {
+  CameraIcon,
+  EmojiModeIcon,
+  ExitIcon,
+  MenuIcon,
+  MoonIcon,
+  PauseIcon,
+  RefreshIcon,
+  SparkleIcon,
+  SunIcon,
+  SystemIcon,
+} from '../icons/CommonIcons';
 
 interface NavbarProps {
   username: string;
@@ -54,119 +66,6 @@ function getNavbarActionIconClassName(variant: 'refresh' | 'sparkle' | 'pause' |
   }
 
   return `${base} group-hover:-translate-y-0.5`;
-}
-
-function MenuIcon({ open }: { open: boolean }) {
-  return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      {open ? (
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="m6 6 12 12M18 6 6 18" />
-      ) : (
-        <>
-          <path strokeLinecap="round" strokeWidth={1.8} d="M4 7h16" />
-          <path strokeLinecap="round" strokeWidth={1.8} d="M4 12h16" />
-          <path strokeLinecap="round" strokeWidth={1.8} d="M4 17h16" />
-        </>
-      )}
-    </svg>
-  );
-}
-
-function SparkleIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="m12 3 1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3Z" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="m18.5 15 0.9 2.6L22 18.5l-2.6 0.9-0.9 2.6-0.9-2.6-2.6-0.9 2.6-0.9 0.9-2.6Z" />
-    </svg>
-  );
-}
-
-function PauseIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <rect x="6" y="5" width="4" height="14" rx="1.2" />
-      <rect x="14" y="5" width="4" height="14" rx="1.2" />
-    </svg>
-  );
-}
-
-function CameraIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 9a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 10.07 4h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 18.07 7H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 13a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-    </svg>
-  );
-}
-
-function RefreshIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M20 12a8 8 0 1 1-2.34-5.66" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M20 4v6h-6" />
-    </svg>
-  );
-}
-
-function EmojiModeIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <>
-      <svg className={`${className} duo-emoji-native`} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-        <circle cx="12" cy="12" r="8" strokeWidth="1.8" />
-        <circle cx="9" cy="10" r="1" fill="currentColor" stroke="none" />
-        <circle cx="15" cy="10" r="1" fill="currentColor" stroke="none" />
-        <path d="M8.5 14c.9 1.2 2.1 1.8 3.5 1.8s2.6-.6 3.5-1.8" strokeWidth="1.8" strokeLinecap="round" />
-      </svg>
-      <svg className={`${className} duo-emoji-svg`} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-        <rect x="4" y="4" width="6" height="6" rx="1.5" strokeWidth="1.8" />
-        <circle cx="17" cy="7" r="3" strokeWidth="1.8" />
-        <path d="m8 15 3 5 3-5 3 5 3-5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </>
-  );
-}
-
-function ExitIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 16l4-4m0 0-4-4m4 4H9" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M13 20H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h6" />
-    </svg>
-  );
-}
-
-function SunIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <circle cx="12" cy="12" r="4" strokeWidth={1.8} />
-      <path strokeLinecap="round" strokeWidth={1.8} d="M12 2.5V5" />
-      <path strokeLinecap="round" strokeWidth={1.8} d="M12 19v2.5" />
-      <path strokeLinecap="round" strokeWidth={1.8} d="M4.93 4.93 6.7 6.7" />
-      <path strokeLinecap="round" strokeWidth={1.8} d="m17.3 17.3 1.77 1.77" />
-      <path strokeLinecap="round" strokeWidth={1.8} d="M2.5 12H5" />
-      <path strokeLinecap="round" strokeWidth={1.8} d="M19 12h2.5" />
-      <path strokeLinecap="round" strokeWidth={1.8} d="m4.93 19.07 1.77-1.77" />
-      <path strokeLinecap="round" strokeWidth={1.8} d="m17.3 6.7 1.77-1.77" />
-    </svg>
-  );
-}
-
-function MoonIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
-    </svg>
-  );
-}
-
-function SystemIcon({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-      <rect x="3" y="4" width="18" height="12" rx="2" strokeWidth={1.8} />
-      <path d="M8 20h8" strokeLinecap="round" strokeWidth={1.8} />
-      <path d="M12 16v4" strokeLinecap="round" strokeWidth={1.8} />
-    </svg>
-  );
 }
 
 function getThemeMenuButtonClassName(active: boolean): string {
