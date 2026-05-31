@@ -5,7 +5,7 @@ interface IconProps {
 }
 
 const PlasticFilter = ({ id }: { id: string }) => (
-  <filter id={id} x="-20%" y="-20%" width="140%" height="140%">
+  <filter id={id} primitiveUnits="userSpaceOnUse" x="-20%" y="-20%" width="140%" height="140%">
     <feGaussianBlur in="SourceAlpha" stdDeviation="0.6" result="blur" />
     <feOffset dx="-0.6" dy="-0.6" result="offset" />
     <feComposite in="SourceGraphic" in2="offset" operator="over" />
@@ -13,7 +13,7 @@ const PlasticFilter = ({ id }: { id: string }) => (
 );
 
 const SharpPlasticFilter = ({ id }: { id: string }) => (
-  <filter id={id} x="-20%" y="-20%" width="140%" height="140%">
+  <filter id={id} primitiveUnits="userSpaceOnUse" x="-20%" y="-20%" width="140%" height="140%">
     <feGaussianBlur in="SourceAlpha" stdDeviation="0.2" result="blur" />
     <feOffset dx="-0.4" dy="-0.4" result="offset" />
     <feComposite in="SourceGraphic" in2="offset" operator="over" />
@@ -239,8 +239,37 @@ export function MenuIcon({ open, className = 'h-4 w-4' }: { open: boolean; class
   );
 }
 
-export function SearchIcon({ className = 'h-4 w-4' }: IconProps) {
+export function SearchIcon({ className = 'h-4 w-4', colorful }: IconProps & { colorful?: boolean }) {
   const id = useId().replace(/:/g, '');
+  if (colorful) {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+        <defs>
+          <PlasticFilter id={`${id}-p`} />
+          <linearGradient id={`${id}-g`} x1="4" y1="4" x2="20" y2="20">
+            <stop stopColor="#7ADFFF" />
+            <stop offset="1" stopColor="#1CB0F6" />
+          </linearGradient>
+        </defs>
+        {/* Handle Outline */}
+        <path d="m14.5 14.5 5.5 5.5" stroke="#1E4799" strokeWidth="4.2" strokeLinecap="round" />
+        {/* Handle Gradient */}
+        <path filter={`url(#${id}-p)`} d="m14.5 14.5 5.5 5.5" stroke={`url(#${id}-g)`} strokeWidth="3.2" strokeLinecap="round" />
+        {/* Handle specularity highlight */}
+        <path d="m15 15 3.5 3.5" stroke="white" strokeWidth="0.8" strokeLinecap="round" strokeOpacity="0.45" />
+
+        {/* Frame Outlines */}
+        <circle cx="10.5" cy="10.5" r="7.1" fill="none" stroke="#1E4799" strokeWidth="0.5" />
+        <circle cx="10.5" cy="10.5" r="3.9" fill="none" stroke="#1E4799" strokeWidth="0.5" />
+        {/* Glass lens background fill */}
+        <circle cx="10.5" cy="10.5" r="3.9" fill={`url(#${id}-g)`} fillOpacity="0.25" />
+        {/* Glass lens glossy frame */}
+        <circle filter={`url(#${id}-p)`} cx="10.5" cy="10.5" r="5.5" fill="none" stroke={`url(#${id}-g)`} strokeWidth="3" />
+        {/* Glass lens top-left curved specular reflection highlight */}
+        <path d="M8 9.5a2.5 2.5 0 0 1 2.5-2.5" stroke="white" strokeWidth="0.9" strokeLinecap="round" strokeOpacity="0.75" />
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
       <defs>
@@ -293,8 +322,32 @@ export function ClockIcon({ className = 'h-4 w-4' }: IconProps) {
   );
 }
 
-export function BarChartIcon({ className = 'h-4 w-4' }: IconProps) {
+export function BarChartIcon({ className = 'h-4 w-4', colorful }: IconProps & { colorful?: boolean }) {
   const id = useId().replace(/:/g, '');
+  if (colorful) {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+        <defs>
+          <PlasticFilter id={`${id}-p`} />
+          <linearGradient id={`${id}-g`} x1="4" y1="4" x2="20" y2="20">
+            <stop stopColor="#8CE63F" />
+            <stop offset="1" stopColor="#58CC02" />
+          </linearGradient>
+        </defs>
+        {/* Bar 1 */}
+        <rect filter={`url(#${id}-p)`} x="4.5" y="11" width="3.5" height="9" rx="1.5" fill={`url(#${id}-g)`} stroke="#256600" strokeWidth="0.5" />
+        <path d="M5.5 12.5v5.5" stroke="white" strokeWidth="0.9" strokeLinecap="round" strokeOpacity="0.6" />
+
+        {/* Bar 2 */}
+        <rect filter={`url(#${id}-p)`} x="10.25" y="4" width="3.5" height="16" rx="1.5" fill={`url(#${id}-g)`} stroke="#256600" strokeWidth="0.5" />
+        <path d="M11.25 5.5v11.5" stroke="white" strokeWidth="0.9" strokeLinecap="round" strokeOpacity="0.6" />
+
+        {/* Bar 3 */}
+        <rect filter={`url(#${id}-p)`} x="16" y="8" width="3.5" height="12" rx="1.5" fill={`url(#${id}-g)`} stroke="#256600" strokeWidth="0.5" />
+        <path d="M17 9.5v8.5" stroke="white" strokeWidth="0.9" strokeLinecap="round" strokeOpacity="0.6" />
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
       <defs>
@@ -327,8 +380,32 @@ export function ArrowUpIcon({ className = 'h-4 w-4' }: IconProps) {
   );
 }
 
-export function QuestionIcon({ className = 'h-4 w-4' }: IconProps) {
+export function QuestionIcon({ className = 'h-4 w-4', colorful }: IconProps & { colorful?: boolean }) {
   const id = useId().replace(/:/g, '');
+  if (colorful) {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+        <defs>
+          <PlasticFilter id={`${id}-p`} />
+          <linearGradient id={`${id}-g`} x1="4" y1="4" x2="20" y2="20">
+            <stop stopColor="#FFAE33" />
+            <stop offset="1" stopColor="#FF7A00" />
+          </linearGradient>
+        </defs>
+        {/* Question mark main curve outlines & gradients */}
+        <path d="M9.5 8.5c0-2.5 5-2.5 5 0 0 1.8-2.5 2.2-2.5 4.5" stroke="#B36200" strokeWidth="4.8" strokeLinecap="round" fill="none" />
+        <path filter={`url(#${id}-p)`} d="M9.5 8.5c0-2.5 5-2.5 5 0 0 1.8-2.5 2.2-2.5 4.5" stroke={`url(#${id}-g)`} strokeWidth="3.8" strokeLinecap="round" fill="none" />
+        {/* Curved specular highlight reflection inside the question curve */}
+        <path d="M9.8 8.8c0-1.8 3.5-1.8 3.5 0 0 1.2-1.7 1.5-1.7 3.5" stroke="white" strokeWidth="0.9" strokeLinecap="round" strokeOpacity="0.65" fill="none" />
+
+        {/* Dot outlines & gradients */}
+        <circle cx="12" cy="17" r="2.2" fill="#B36200" />
+        <circle filter={`url(#${id}-p)`} cx="12" cy="17" r="1.7" fill={`url(#${id}-g)`} />
+        {/* Specular highlight point inside dot */}
+        <circle cx="11.4" cy="16.4" r="0.55" fill="white" fillOpacity="0.75" />
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
       <defs>

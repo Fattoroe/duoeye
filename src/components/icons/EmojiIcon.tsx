@@ -104,7 +104,7 @@ function Glyph({ symbol }: { symbol: string }) {
   const uid = useId().replace(/:/g, '');
 
   const PlasticFilter = ({ id }: { id: string }) => (
-    <filter id={id} x="-20%" y="-20%" width="140%" height="140%">
+    <filter id={id} primitiveUnits="userSpaceOnUse" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="0.6" result="blur" />
       <feOffset dx="-0.6" dy="-0.6" result="offset" />
       <feComposite in="SourceGraphic" in2="offset" operator="over" />
@@ -112,7 +112,7 @@ function Glyph({ symbol }: { symbol: string }) {
   );
 
   const SharpPlasticFilter = ({ id }: { id: string }) => (
-    <filter id={id} x="-20%" y="-20%" width="140%" height="140%">
+    <filter id={id} primitiveUnits="userSpaceOnUse" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="0.2" result="blur" />
       <feOffset dx="-0.4" dy="-0.4" result="offset" />
       <feComposite in="SourceGraphic" in2="offset" operator="over" />
@@ -219,10 +219,10 @@ function Glyph({ symbol }: { symbol: string }) {
               <stop offset="1" stopColor="#E65C00" />
             </linearGradient>
           </defs>
-          <path filter={`url(#${uid}-p)`} d="M20 13h24v8c0 8.8-7.2 16-16 16S12 29.8 12 21v-3c0-2.8 2.2-5 5-5h3Z" fill={`url(#${uid}-trophy-cup)`} stroke="#B36200" strokeWidth="0.5" />
-          <path d="M18 18h-4c-3.3 0-6 2.7-6 6s2.7 6 6 6h4M46 18h4c3.3 0 6 2.7 6 6s-2.7 6-6 6h-4" stroke="#FF9D00" strokeWidth="4.5" strokeLinecap="round" />
+          <path filter={`url(#${uid}-p)`} d="M20 13h24v8c0 7.7-5.4 14-12 14s-12-6.3-12-14v-8Z" fill={`url(#${uid}-trophy-cup)`} stroke="#B36200" strokeWidth="0.5" />
+          <path d="M20 18h-4c-3.3 0-6 2.7-6 6s2.7 6 6 6h4M44 18h4c3.3 0 6 2.7 6 6s-2.7 6-6 6h-4" stroke="#FF9D00" strokeWidth="4.5" strokeLinecap="round" />
           <path filter={`url(#${uid}-p)`} d="M28 37h8v7c0 1.7 1.3 3 3 3h1c1.7 0 3 1.3 3 3v1H21v-1c0-1.7 1.3-3 3-3h1c1.7 0 3-1.3 3-3v-7Z" fill={`url(#${uid}-trophy-base)`} stroke="#B34700" strokeWidth="0.5" />
-          <path d="M22.6 16.5c2.5-1 5.2-1.5 8-1.5 4.9 0 9.5 1.6 13.1 4.4" stroke="white" strokeOpacity="0.4" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M22 17.5c4-2 16-2 20 0" stroke="white" strokeOpacity="0.4" strokeWidth="2.5" strokeLinecap="round" />
         </svg>
       );
     case '\u{2B50}':

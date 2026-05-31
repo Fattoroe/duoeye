@@ -31,19 +31,35 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const ACHIEVEMENT_CARD_STYLES: Record<string, string> = {
-  streak_7: 'from-[#ff8a66] via-[#ff9f5a] to-[#ffb36b]',
-  streak_30: 'from-[#ff7f6e] via-[#ff9161] to-[#ffb14c]',
-  streak_100: 'from-[#ff9360] via-[#ffa24f] to-[#ffbf47]',
-  streak_365: 'from-[#ff8f66] via-[#ff9a63] to-[#ffb86a]',
-  xp_1k: 'from-[#ffcd38] via-[#ffc21e] to-[#ffb100]',
-  xp_10k: 'from-[#ffd23f] via-[#ffc720] to-[#ffbb00]',
-  xp_50k: 'from-[#ffcb36] via-[#ffbf15] to-[#ffac00]',
-  xp_100k: 'from-[#ffd95a] via-[#ffc928] to-[#ffb100]',
-  daily_xp_100: 'from-[#ffe15c] via-[#ffd73a] to-[#ffc91d]',
-  daily_xp_500: 'from-[#ffe76d] via-[#ffda47] to-[#ffcb21]',
-  daily_xp_1000: 'from-[#f5d54b] via-[#e6c12d] to-[#cfa317]',
-  lang_3: 'from-[#b879f1] via-[#cf63cb] to-[#f04d8e]',
-  lang_5: 'from-[#c8c8cc] via-[#d9d9df] to-[#eeeeef]',
+  streak_7: 'from-[#FFE1D3] via-[#FFBCA1] to-[#FF8C64]',
+  streak_30: 'from-[#E6CEFF] via-[#D2A7FF] to-[#B372FB]',
+  streak_100: 'from-[#C4F7DC] via-[#96F1C9] to-[#51E0A8]',
+  streak_365: 'from-[#FFD8DB] via-[#FFB8C2] to-[#FC8A9A]',
+  xp_1k: 'from-[#CEDFFF] via-[#AECDFE] to-[#79B5FC]',
+  xp_10k: 'from-[#FDDDF0] via-[#FBC0E0] to-[#F789C6]',
+  xp_50k: 'from-[#FFE6C3] via-[#FDC77B] to-[#FC9D3A]',
+  xp_100k: 'from-[#D9DEFF] via-[#B6C3FD] to-[#93A0FA]',
+  daily_xp_100: 'from-[#EAFFBF] via-[#D2FF80] to-[#B0EC4D]',
+  daily_xp_500: 'from-[#FFE9A4] via-[#FDD859] to-[#FDBF26]',
+  daily_xp_1000: 'from-[#FFF7B0] via-[#FEF271] to-[#FDE43E]',
+  lang_3: 'from-[#C0F4F8] via-[#92E8F3] to-[#46D7EA]',
+  lang_5: 'from-[#C9EBE8] via-[#A3E0DC] to-[#66CDC2]',
+};
+
+const ACHIEVEMENT_CARD_SHADOWS: Record<string, string> = {
+  streak_7: 'shadow-[0_8px_18px_rgba(255,94,98,0.18)] hover:shadow-[0_14px_28px_rgba(255,94,98,0.26)]',
+  streak_30: 'shadow-[0_8px_18px_rgba(121,86,236,0.18)] hover:shadow-[0_14px_28px_rgba(121,86,236,0.26)]',
+  streak_100: 'shadow-[0_8px_18px_rgba(5,213,161,0.18)] hover:shadow-[0_14px_28px_rgba(5,213,161,0.26)]',
+  streak_365: 'shadow-[0_8px_18px_rgba(252,103,103,0.18)] hover:shadow-[0_14px_28px_rgba(252,103,103,0.26)]',
+  xp_1k: 'shadow-[0_8px_18px_rgba(29,168,247,0.18)] hover:shadow-[0_14px_28px_rgba(29,168,247,0.26)]',
+  xp_10k: 'shadow-[0_8px_18px_rgba(242,108,195,0.18)] hover:shadow-[0_14px_28px_rgba(242,108,195,0.26)]',
+  xp_50k: 'shadow-[0_8px_18px_rgba(255,89,100,0.18)] hover:shadow-[0_14px_28px_rgba(255,89,100,0.26)]',
+  xp_100k: 'shadow-[0_8px_18px_rgba(92,127,255,0.18)] hover:shadow-[0_14px_28px_rgba(92,127,255,0.26)]',
+  daily_xp_100: 'shadow-[0_8px_18px_rgba(74,222,128,0.18)] hover:shadow-[0_14px_28px_rgba(74,222,128,0.26)]',
+  daily_xp_500: 'shadow-[0_8px_18px_rgba(249,115,22,0.18)] hover:shadow-[0_14px_28px_rgba(249,115,22,0.26)]',
+  daily_xp_1000: 'shadow-[0_8px_18px_rgba(250,204,21,0.18)] hover:shadow-[0_14px_28px_rgba(250,204,21,0.26)]',
+  lang_3: 'shadow-[0_8px_18px_rgba(16,185,129,0.18)] hover:shadow-[0_14px_28px_rgba(16,185,129,0.26)]',
+  lang_5: 'shadow-[0_8px_18px_rgba(99,102,241,0.18)] hover:shadow-[0_14px_28px_rgba(99,102,241,0.26)]',
 };
 
 function getAchievementCardIconClassName(symbol: string, mode: 'emoji' | 'svg'): string {
@@ -129,6 +145,7 @@ export default function AchievementsSection({ userData }: AchievementsSectionPro
 
   const allAchievements = [...unlocked, ...locked];
   const selectedUnlocked = selectedAchievement ? unlocked.some((achievement) => achievement.id === selectedAchievement.id) : false;
+  const modalBgGradient = selectedAchievement ? (ACHIEVEMENT_CARD_STYLES[selectedAchievement.id] || 'from-gray-300 to-gray-400') : '';
 
   useEffect(() => {
     if (!selectedAchievement) return;
@@ -148,7 +165,7 @@ export default function AchievementsSection({ userData }: AchievementsSectionPro
       <div className="mb-4 flex items-center justify-between max-[520px]:mb-3 min-[768px]:max-[1279px]:mb-3">
         <div className="flex items-center gap-2">
           <EmojiIcon symbol="🏅" className="text-[1.32rem] leading-none max-[520px]:text-[1.12rem] min-[768px]:max-[1279px]:text-[1.14rem]" />
-          <h2 className="text-lg font-semibold max-[520px]:text-base">成就勋章</h2>
+          <h2 className="text-lg font-semibold max-[520px]:text-base whitespace-nowrap">成就勋章</h2>
         </div>
         <span className="text-sm text-apple-gray6 max-[520px]:text-xs min-[768px]:max-[1279px]:text-xs">
           {unlocked.length} / {ALL_ACHIEVEMENTS.length}
@@ -175,18 +192,26 @@ export default function AchievementsSection({ userData }: AchievementsSectionPro
             <button
               key={achievement.id}
               onClick={() => setSelectedAchievement(achievement)}
-              className={`group relative aspect-square overflow-hidden rounded-2xl border p-1 transition-transform duration-200 hover:scale-[1.02] max-[520px]:rounded-[18px] max-[520px]:p-0.5 min-[768px]:max-[1279px]:aspect-[1/0.82] min-[768px]:max-[1279px]:rounded-[18px] min-[768px]:max-[1279px]:p-0.5 ${
+              className={`bg-white dark:bg-[#2c2c2e] group relative aspect-square overflow-hidden rounded-2xl border p-1 transition-transform duration-200 hover:scale-[1.02] max-[520px]:rounded-[18px] max-[520px]:p-0.5 min-[768px]:max-[1279px]:aspect-[1/0.82] min-[768px]:max-[1279px]:rounded-[18px] min-[768px]:max-[1279px]:p-0.5 ${
                 isUnlocked
-                  ? 'border-white/60 shadow-[0_8px_18px_rgba(251,146,60,0.14)] hover:shadow-[0_14px_28px_rgba(251,146,60,0.2)] dark:border-transparent dark:[background-clip:border-box]'
-                  : 'border-apple-gray3 bg-gradient-to-br from-[#f7f7f8] to-[#ececef] opacity-70 hover:opacity-90 hover:shadow-[0_12px_24px_rgba(15,23,42,0.08)] dark:border-apple-dark4 dark:from-apple-dark3 dark:to-apple-dark2 dark:hover:shadow-[0_14px_26px_rgba(0,0,0,0.22)]'
+                  ? `border-white/60 ${ACHIEVEMENT_CARD_SHADOWS[achievement.id] || 'shadow-[0_8px_18px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_28px_rgba(15,23,42,0.1)]'} dark:border-white/10 dark:[background-clip:border-box]`
+                  : 'border-apple-gray3/60 hover:shadow-[0_12px_24px_rgba(15,23,42,0.06)] dark:border-apple-dark4/60'
               }`}
             >
-              {isUnlocked && (
+              {isUnlocked ? (
                 <>
-                  <div aria-hidden="true" className={`absolute inset-0 bg-gradient-to-br ${cardStyle} opacity-[0.78]`} />
+                  <div aria-hidden="true" className={`absolute inset-0 bg-gradient-to-br ${cardStyle} opacity-[0.91] dark:opacity-[0.16]`} />
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.42),transparent_58%),linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.18))]"
+                    className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.48),transparent_58%),linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.22))] dark:hidden"
+                  />
+                </>
+              ) : (
+                <>
+                  <div aria-hidden="true" className={`absolute inset-0 bg-gradient-to-br ${cardStyle} opacity-[0.38] saturate-[0.7] contrast-[0.9] dark:opacity-[0.06]`} />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_60%)] dark:bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_60%)] bg-black/[0.02] dark:bg-black/[0.12] dark:hidden"
                   />
                 </>
               )}
@@ -212,27 +237,42 @@ export default function AchievementsSection({ userData }: AchievementsSectionPro
           <div
             key={selectedAchievement.id}
             ref={modalRef}
-            className="pointer-events-auto w-[260px] animate-scale-in rounded-3xl border border-black/6 bg-[rgba(255,255,255,0.94)] px-5 py-6 text-center shadow-[0_22px_52px_rgba(15,23,42,0.16)] transition-all duration-200 dark:border-white/10 dark:bg-[rgba(44,44,46,0.96)]"
+            className="pointer-events-auto relative w-[260px] animate-scale-in overflow-hidden rounded-3xl border border-white/60 bg-white/18 backdrop-blur-xl dark:bg-[#2c2c2e]/24 dark:backdrop-blur-xl px-5 py-6 text-center shadow-[0_24px_58px_rgba(15,23,42,0.18)] transition-all duration-200 dark:border-white/20"
           >
+            {/* Colored Gradient Background with frosted gloss */}
+            <div aria-hidden="true" className={`absolute inset-0 bg-gradient-to-br ${modalBgGradient} opacity-[0.24] dark:opacity-[0.12]`} />
             <div
-              className={`mx-auto mb-4 grid h-20 w-20 place-items-center rounded-[22px] bg-gradient-to-br ${
-                CATEGORY_COLORS[selectedAchievement.category] || 'from-gray-400 to-gray-500'
-              } shadow-[0_12px_28px_rgba(251,191,36,0.24)]`}
-            >
-              <EmojiIcon symbol={selectedUnlocked ? selectedAchievement.icon : '🔒'} className={getAchievementModalIconClassName()} />
-            </div>
+              aria-hidden="true"
+              className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.48),transparent_60%),linear-gradient(180deg,rgba(255,255,255,0.1),rgba(255,255,255,0.18))] dark:hidden"
+            />
 
-            <h3 className="mb-2 text-2xl font-black tracking-tight">{selectedAchievement.title}</h3>
-            <p className="mx-auto mb-4 text-base text-apple-gray6 dark:text-apple-dark6">{selectedAchievement.description}</p>
+            {/* Content wrapper */}
+            <div className="relative flex flex-col items-center">
+              {/* Icon Frame - clean and floating directly */}
+              <div className="mb-4 flex h-20 w-20 items-center justify-center">
+                <EmojiIcon
+                  symbol={selectedUnlocked ? selectedAchievement.icon : '🔒'}
+                  className="block text-[3rem] filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.12)]"
+                />
+              </div>
 
-            <div
-              className={`mx-auto inline-flex rounded-full px-4 py-1.5 text-sm font-bold ${
-                selectedUnlocked
-                  ? 'bg-duo-green/20 text-duo-green'
-                  : 'bg-apple-gray2 text-apple-gray6 dark:bg-apple-dark3 dark:text-apple-dark6'
-              }`}
-            >
-              {selectedUnlocked ? '已解锁' : '未解锁'}
+              <h3 className="mb-1.5 text-2xl font-black tracking-tight text-slate-800 dark:text-white">
+                {selectedAchievement.title}
+              </h3>
+              
+              <p className="mx-auto mb-4 max-w-[200px] text-sm font-medium leading-relaxed text-slate-700 dark:text-white/80">
+                {selectedAchievement.description}
+              </p>
+
+              <div
+                className={`mx-auto inline-flex rounded-full border px-4 py-1 text-xs font-bold shadow-[0_2px_8px_rgba(0,0,0,0.04)] ${
+                  selectedUnlocked
+                    ? 'border-emerald-500/25 bg-emerald-500/20 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-500/30 dark:text-emerald-300'
+                    : 'border-slate-400/20 bg-slate-500/10 text-slate-700 dark:border-white/15 dark:bg-white/10 dark:text-white/70'
+                }`}
+              >
+                {selectedUnlocked ? '已解锁' : '未解锁'}
+              </div>
             </div>
           </div>
         </div>

@@ -1060,7 +1060,7 @@ export default function DuoDashApp({
 
   return (
     <EmojiModeProvider mode={emojiIconMode}>
-      <div ref={pageRef} data-screenshot-root="true" data-screenshot-lock="true" className="relative min-h-screen overflow-x-hidden bg-apple-gray1 dark:bg-apple-dark1">
+      <div ref={pageRef} data-screenshot-root="true" data-screenshot-lock="true" className={`relative min-h-screen overflow-x-hidden bg-apple-gray1 dark:bg-apple-dark1 ${emojiIconMode === 'svg' ? 'duo-mode-svg' : ''}`}>
         <div className={`screenshot-soft-glow pointer-events-none ${pageGlowBackgroundClassName}`} />
 
       {isScreenshotting ? (

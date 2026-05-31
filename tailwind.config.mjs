@@ -35,7 +35,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'Nunito', 'system-ui', 'sans-serif'],
+        sans: ['"Songti SC"', '"STSong"', '"SimSun"', '"宋体"', '"Songti TC"', 'Georgia', '"Times New Roman"', 'Garamond', 'Baskerville', 'serif'],
       },
       boxShadow: {
         'apple': '0 4px 24px rgba(0, 0, 0, 0.06)',

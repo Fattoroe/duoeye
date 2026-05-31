@@ -566,8 +566,8 @@ export default function LandingHero() {
           <div className="mx-auto max-w-[1560px] rounded-[28px] bg-[rgba(255,255,255,0.9)] px-4 py-4 shadow-[0_6px_16px_rgba(15,23,42,0.04)] dark:bg-[rgba(44,44,46,0.82)]">
             <div className="grid grid-cols-3 gap-2.5">
               <a href="#features" onClick={() => setIsMenuOpen(false)} className={mobileMenuCompactItemClassName}>
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[14px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_10px_rgba(15,23,42,0.04)] dark:border-white/10 dark:bg-white/10 dark:text-white">
-                  <BarChartIcon className="h-3.5 w-3.5" />
+                <div className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] dark:border-white/10 dark:bg-white/10 dark:text-white">
+                  <BarChartIcon className="h-4 w-4" colorful={true} />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[15px] font-semibold tracking-tight text-apple-dark1 dark:text-white">功能</div>
@@ -575,8 +575,8 @@ export default function LandingHero() {
                 </div>
               </a>
               <a href="#preview" onClick={() => setIsMenuOpen(false)} className={mobileMenuCompactItemClassName}>
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[14px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_10px_rgba(15,23,42,0.04)] dark:border-white/10 dark:bg-white/10 dark:text-white">
-                  <SearchIcon className="h-3.5 w-3.5" />
+                <div className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] dark:border-white/10 dark:bg-white/10 dark:text-white">
+                  <SearchIcon className="h-4 w-4" colorful={true} />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[15px] font-semibold tracking-tight text-apple-dark1 dark:text-white">预览</div>
@@ -584,8 +584,8 @@ export default function LandingHero() {
                 </div>
               </a>
               <a href="#faq" onClick={() => setIsMenuOpen(false)} className={mobileMenuCompactItemClassName}>
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[14px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_10px_rgba(15,23,42,0.04)] dark:border-white/10 dark:bg-white/10 dark:text-white">
-                  <QuestionIcon className="h-3.5 w-3.5" />
+                <div className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] dark:border-white/10 dark:bg-white/10 dark:text-white">
+                  <QuestionIcon className="h-4 w-4" colorful={true} />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[15px] font-semibold tracking-tight text-apple-dark1 dark:text-white">问题</div>

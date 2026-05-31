@@ -57,7 +57,7 @@ export default function DuoReview({ userData }: DuoReviewProps) {
               <ChatIcon className="h-7 w-7" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold tracking-tight text-apple-dark1 dark:text-white">多儿点评</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-apple-dark1 dark:text-white whitespace-nowrap">多儿点评</h2>
               <p className="mt-1 text-sm text-apple-gray6 dark:text-apple-dark6">用简短总结告诉你今天的学习状态</p>
             </div>
           </div>

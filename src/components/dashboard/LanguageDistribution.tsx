@@ -102,17 +102,18 @@ function resolveLanguageLabel(course: Course): React.ReactNode {
   const flagCode = LANGUAGE_FLAGS[course.learningLanguage];
 
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-center gap-2.5 whitespace-nowrap">
       {flagCode ? (
         <img 
           src={`https://flagcdn.com/w40/${flagCode}.png`} 
           alt={target}
+          crossOrigin="anonymous"
           className="h-[14px] w-[21px] rounded-[2px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] object-cover"
         />
       ) : (
         <EmojiIcon symbol="🌐" className="text-sm" />
       )}
-      <div className="flex items-baseline gap-1.5">
+      <div className="flex items-baseline gap-1.5 whitespace-nowrap">
         <span className="font-semibold text-apple-dark1 dark:text-white">{target}</span>
         {course.fromLanguage && (
           <span className="text-[10px] font-medium text-apple-gray6 dark:text-apple-dark6">
@@ -138,7 +139,7 @@ export default function LanguageDistribution({ courses, totalXp }: LanguageDistr
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <EmojiIcon symbol="🌍" className="text-[1.3rem] leading-none" />
-          <h2 className="text-lg font-semibold text-apple-dark1 dark:text-white">语言分布</h2>
+          <h2 className="text-lg font-semibold text-apple-dark1 dark:text-white whitespace-nowrap">语言分布</h2>
         </div>
       </div>
 
@@ -152,9 +153,9 @@ export default function LanguageDistribution({ courses, totalXp }: LanguageDistr
               key={course.id}
               className="group flex flex-grow flex-col justify-center rounded-2xl px-2 py-2 transition-[transform,box-shadow,background-color] duration-300 hover:-translate-y-1 hover:bg-black/[0.02] hover:shadow-[0_10px_20px_rgba(15,23,42,0.06)] dark:hover:bg-white/[0.03] dark:hover:shadow-[0_12px_22px_rgba(0,0,0,0.2)]"
             >
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-medium text-apple-dark1 dark:text-white">{resolveLanguageLabel(course)}</span>
-                <span className="text-sm font-semibold" style={{ color }}>
+              <div className="mb-2 flex items-center justify-between gap-4">
+                <div className="text-sm font-medium text-apple-dark1 dark:text-white min-w-0">{resolveLanguageLabel(course)}</div>
+                <span className="text-sm font-semibold shrink-0" style={{ color }}>
                   {percentage}%
                 </span>
               </div>

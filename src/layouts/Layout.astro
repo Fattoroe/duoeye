@@ -61,6 +61,8 @@ const { title } = Astro.props;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-variant-numeric: lining-nums !important;
+    font-feature-settings: "lnum" !important;
   }
 
   :root {
@@ -75,15 +77,20 @@ const { title } = Astro.props;
     --duo-orange: #FF9600;
   }
 
-  html.duo-mode-svg .duo-emoji-native { display: none !important; }
-  html:not(.duo-mode-svg) .duo-emoji-svg { display: none !important; }
+  /* By default, hide SVG emojis and show native ones */
+  .duo-emoji-svg { display: none !important; }
+  .duo-emoji-native { display: inline-flex !important; }
+
+  /* If inside a container with .duo-mode-svg, hide native and show SVG emojis */
+  .duo-mode-svg .duo-emoji-native { display: none !important; }
+  .duo-mode-svg .duo-emoji-svg { display: inline-flex !important; }
 
   html.dark {
     color-scheme: dark;
   }
 
   html {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+    font-family: "Songti SC", "STSong", "SimSun", "宋体", "Songti TC", Georgia, "Times New Roman", Garamond, Baskerville, serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background: #f5f5f7;

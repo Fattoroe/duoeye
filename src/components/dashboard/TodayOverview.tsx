@@ -121,7 +121,7 @@ export default function TodayOverview({ userData }: TodayOverviewProps) {
 
             <div className="space-y-3">
               <div>
-                <h2 className="text-[2rem] font-black tracking-tight text-apple-dark1 dark:text-white">今天也在稳步推进</h2>
+                <h2 className="text-[2rem] font-black tracking-tight text-apple-dark1 dark:text-white whitespace-nowrap">今天也在稳步推进</h2>
                 <p className="mt-2 text-base text-apple-gray6 dark:text-apple-dark6">
                   {new Date().toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'long' })}
                 </p>
