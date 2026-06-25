@@ -138,7 +138,7 @@ export default function LandingPreviewSection({
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
         <div className={`${sectionCardClassName} overflow-hidden p-4 md:col-span-12 sm:p-5`}>
-          <HeatmapChart data={landingHeatmapPreviewData} closeTooltipOnScroll controlOrder="landing" />
+          <HeatmapChart data={landingHeatmapPreviewData} closeTooltipOnScroll />
         </div>
 
         <div className="md:col-span-6">

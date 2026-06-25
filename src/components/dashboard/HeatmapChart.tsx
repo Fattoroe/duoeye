@@ -7,7 +7,7 @@ interface HeatmapChartProps {
   data: { date: string; xp: number; time?: number }[];
   forceViewMode?: ViewMode;
   closeTooltipOnScroll?: boolean;
-  controlOrder?: 'landing' | 'dashboard';
+  registrationYear?: number;
 }
 
 type ViewMode = 'quarter' | 'half' | 'year';
@@ -58,7 +58,7 @@ export default function HeatmapChart({
   data,
   forceViewMode,
   closeTooltipOnScroll = false,
-  controlOrder = 'dashboard',
+  registrationYear,
 }: HeatmapChartProps) {
   const now = new Date();
   const timeZone = getBrowserTimeZone();
@@ -67,12 +67,12 @@ export default function HeatmapChart({
   const [selectedQuarter, setSelectedQuarter] = useState(Math.ceil((now.getMonth() + 1) / 3));
   const [selectedHalf, setSelectedHalf] = useState(now.getMonth() < 6 ? 1 : 2);
   const [viewMode, setViewMode] = useState<ViewMode>(forceViewMode || 'year');
-  const [isCompactLayout, setIsCompactLayout] = useState(false);
-  const [isNarrowControlLayout, setIsNarrowControlLayout] = useState(false);
+  const [isYearPanelOpen, setIsYearPanelOpen] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipInfo | null>(null);
   const [tooltipTransitionMs, setTooltipTransitionMs] = useState(180);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const tooltipFrameRef = useRef<number | null>(null);
+  const yearPanelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setTooltip(null);
@@ -117,31 +117,28 @@ export default function HeatmapChart({
     };
   }, [forceViewMode]);
 
-  useEffect(() => {
-    function syncLayoutFlags(): void {
-      setIsNarrowControlLayout(window.innerWidth <= 480);
-      setIsCompactLayout(window.innerWidth <= 420);
-    }
-
-    syncLayoutFlags();
-    window.addEventListener('resize', syncLayoutFlags);
-    return () => window.removeEventListener('resize', syncLayoutFlags);
-  }, []);
 
   useEffect(() => {
-    if (!tooltip) return;
+    if (!tooltip && !isYearPanelOpen) return;
 
     function handleClickOutside(event: MouseEvent | globalThis.MouseEvent): void {
       const target = event.target as HTMLElement | null;
-      if (target?.closest('.heatmap-cell')) return;
-      if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
-        setTooltip(null);
+      // close year panel
+      if (isYearPanelOpen && yearPanelRef.current && !yearPanelRef.current.contains(target)) {
+        setIsYearPanelOpen(false);
+      }
+      // close tooltip
+      if (tooltip) {
+        if (target?.closest('.heatmap-cell')) return;
+        if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
+          setTooltip(null);
+        }
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [tooltip]);
+  }, [tooltip, isYearPanelOpen]);
 
   const { xpMap, timeMap, sortedYears } = useMemo(() => {
     const xpByDate = new Map<string, number>();
@@ -159,6 +156,15 @@ export default function HeatmapChart({
       if (!Number.isNaN(year) && year > 2010 && year <= currentYear) {
         yearSet.add(year);
       }
+    }
+
+    // Fill in all years from registrationYear to currentYear (inclusive)
+    const minYear = registrationYear && registrationYear > 2010 && registrationYear <= currentYear
+      ? registrationYear
+      : yearSet.size > 0 ? Math.min(...yearSet) : currentYear;
+
+    for (let y = minYear; y <= currentYear; y++) {
+      yearSet.add(y);
     }
 
     const years = Array.from(yearSet).sort((a, b) => b - a);
@@ -240,13 +246,11 @@ export default function HeatmapChart({
   }, [selectedHalf, selectedQuarter, selectedYear, timeMap, timeZone, viewMode, xpMap]);
 
   const totalXp = useMemo(() => allDates.reduce((sum, item) => sum + Math.max(item.xp, 0), 0), [allDates]);
+  const totalTime = useMemo(() => allDates.reduce((sum, item) => sum + Math.max(item.time ?? 0, 0), 0), [allDates]);
   const activeDays = useMemo(() => allDates.filter((item) => item.xp > 0).length, [allDates]);
   const gridMinWidth = useMemo(() => Math.max(320, weeks.length * 14 + 28), [weeks.length]);
   const quarterControls = viewMode === 'quarter' ? [1, 2, 3, 4] : [];
   const halfControls = viewMode === 'half' ? [1, 2] : [];
-  const shouldUseLandingStackLayout = controlOrder === 'landing' && isNarrowControlLayout;
-  const shouldSwapControlRows = (controlOrder === 'dashboard' && isNarrowControlLayout && !isCompactLayout) || shouldUseLandingStackLayout;
-  const shouldUseCompactGrid = isCompactLayout || shouldUseLandingStackLayout;
 
   const updateTooltipPosition = useCallback((dateStr: string, xp: number, time?: number, transitionMs = 180) => {
     const cell = document.querySelector(`[data-heatmap-date="${dateStr}"]`) as HTMLElement | null;
@@ -338,15 +342,16 @@ export default function HeatmapChart({
 
   return (
     <div className="w-full">
-      <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-semibold tracking-tight text-apple-dark1 dark:text-white">学习热力图</h2>
           <p className="mt-1 text-sm text-apple-gray6 dark:text-apple-dark6">按日期查看经验密度和学习频率</p>
         </div>
 
-        <div className={`w-full ${shouldUseCompactGrid ? 'flex flex-col items-end gap-2' : 'flex flex-wrap items-center justify-end gap-2 xl:w-auto'}`}>
-          {!shouldSwapControlRows && ((controlOrder === 'landing' && isCompactLayout) || !isCompactLayout) && quarterControls.length > 0 && (
-            <div className={`flex ${shouldUseCompactGrid ? 'flex-wrap justify-end gap-1' : 'items-center gap-1'}`}>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Quarter controls */}
+          {quarterControls.length > 0 && (
+            <div className="flex items-center gap-1">
               {quarterControls.map((quarter) => (
                 <button
                   key={quarter}
@@ -363,13 +368,14 @@ export default function HeatmapChart({
             </div>
           )}
 
-          {!shouldSwapControlRows && ((controlOrder === 'landing' && isCompactLayout) || !isCompactLayout) && halfControls.length > 0 && (
-            <div className={`flex ${shouldUseCompactGrid ? 'flex-wrap justify-end gap-1' : 'items-center gap-1'}`}>
+          {/* Half-year controls */}
+          {halfControls.length > 0 && (
+            <div className="flex items-center gap-1">
               {halfControls.map((half) => (
                 <button
                   key={half}
                   onClick={() => setSelectedHalf(half)}
-                  className={`inline-flex min-w-[76px] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold [background-clip:padding-box] transition-[transform,box-shadow,color,background-color,border-color] duration-200 ${
+                  className={`inline-flex min-w-[64px] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold [background-clip:padding-box] transition-[transform,box-shadow,color,background-color,border-color] duration-200 ${
                     half === selectedHalf
                       ? 'border-transparent bg-[#111827] text-white shadow-[0_10px_24px_rgba(17,24,39,0.18)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(17,24,39,0.22)] dark:bg-white dark:text-apple-dark1 dark:hover:shadow-[0_14px_28px_rgba(0,0,0,0.24)]'
                       : 'border-black/5 bg-white/72 text-apple-gray6 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] hover:text-apple-dark1 dark:border-white/10 dark:bg-white/10 dark:text-apple-dark6 dark:hover:shadow-[0_8px_18px_rgba(0,0,0,0.22)] dark:hover:text-white'
@@ -381,99 +387,54 @@ export default function HeatmapChart({
             </div>
           )}
 
-          <div className={`flex ${shouldUseCompactGrid ? 'flex-wrap justify-end gap-1' : 'items-center gap-1'}`}>
-            {sortedYears.map((year) => (
-              <button
-                key={year}
-                onClick={() => setSelectedYear(year)}
-                 className={`overflow-hidden rounded-full border px-3 py-1.5 text-xs font-semibold [background-clip:padding-box] transition-[transform,box-shadow,color,background-color,border-color] duration-200 ${
-                  year === selectedYear
-                    ? 'border-transparent bg-[#111827] text-white shadow-[0_10px_24px_rgba(17,24,39,0.18)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(17,24,39,0.22)] dark:bg-white dark:text-apple-dark1 dark:hover:shadow-[0_14px_28px_rgba(0,0,0,0.24)]'
-                    : 'border-black/5 bg-white/72 text-apple-gray6 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] hover:text-apple-dark1 dark:border-white/10 dark:bg-white/10 dark:text-apple-dark6 dark:hover:shadow-[0_8px_18px_rgba(0,0,0,0.22)] dark:hover:text-white'
-                }`}
+          {/* Year selector – collapsible vertical panel */}
+          <div ref={yearPanelRef} className="relative">
+            <button
+              onClick={() => setIsYearPanelOpen((o) => !o)}
+              className={`inline-flex w-[72px] items-center justify-between rounded-[12px] border px-3 py-2 text-xs font-semibold [background-clip:padding-box] transition-[transform,box-shadow,color,background-color,border-color] duration-200 ${
+                isYearPanelOpen
+                  ? 'border-transparent bg-[#111827] text-white shadow-[0_10px_24px_rgba(17,24,39,0.18)] dark:bg-white dark:text-apple-dark1'
+                  : 'border-black/5 bg-white/72 text-apple-gray6 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] hover:text-apple-dark1 dark:border-white/10 dark:bg-white/10 dark:text-apple-dark6 dark:hover:shadow-[0_8px_18px_rgba(0,0,0,0.22)] dark:hover:text-white'
+              }`}
+            >
+              <span>{selectedYear}</span>
+              <svg
+                className={`h-3 w-3 shrink-0 transition-transform duration-200 ${isYearPanelOpen ? 'rotate-180' : ''}`}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
               >
-                {year}
-              </button>
-            ))}
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {/* Vertical dropdown panel – same width as trigger */}
+            <div
+              className={`absolute right-0 top-[calc(100%+6px)] z-30 w-[72px] overflow-hidden rounded-[18px] border border-black/[0.06] bg-white/96 shadow-[0_16px_36px_rgba(15,23,42,0.13)] backdrop-blur-sm transition-[opacity,transform,max-height] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] dark:border-white/10 dark:bg-[rgba(44,44,46,0.97)] ${
+                isYearPanelOpen ? 'max-h-[320px] opacity-100 translate-y-0' : 'pointer-events-none max-h-0 opacity-0 -translate-y-2'
+              }`}
+            >
+              <div className="flex flex-col gap-0.5 p-1.5">
+                {sortedYears.map((year) => (
+                  <button
+                    key={year}
+                    onClick={() => { setSelectedYear(year); setIsYearPanelOpen(false); }}
+                    className={`w-full rounded-[10px] px-2 py-2 text-center text-xs font-semibold transition-[background-color,color] duration-150 ${
+                      year === selectedYear
+                        ? 'bg-[#111827] text-white dark:bg-white dark:text-apple-dark1'
+                        : 'text-apple-gray6 hover:bg-black/[0.05] hover:text-apple-dark1 dark:text-apple-dark6 dark:hover:bg-white/[0.08] dark:hover:text-white'
+                    }`}
+                  >
+                    {year}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-
-          {shouldSwapControlRows && quarterControls.length > 0 && (
-            <div className="flex items-center gap-1">
-              {quarterControls.map((quarter) => (
-                <button
-                  key={`narrow-quarter-${quarter}`}
-                  onClick={() => setSelectedQuarter(quarter)}
-                  className={`overflow-hidden rounded-full border px-3 py-1.5 text-xs font-semibold [background-clip:padding-box] transition-[transform,box-shadow,color,background-color,border-color] duration-200 ${
-                    quarter === selectedQuarter
-                      ? 'border-transparent bg-[#111827] text-white shadow-[0_10px_24px_rgba(17,24,39,0.18)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(17,24,39,0.22)] dark:bg-white dark:text-apple-dark1 dark:hover:shadow-[0_14px_28px_rgba(0,0,0,0.24)]'
-                      : 'border-black/5 bg-white/72 text-apple-gray6 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] hover:text-apple-dark1 dark:border-white/10 dark:bg-white/10 dark:text-apple-dark6 dark:hover:shadow-[0_8px_18px_rgba(0,0,0,0.22)] dark:hover:text-white'
-                  }`}
-                >
-                  Q{quarter}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {shouldSwapControlRows && halfControls.length > 0 && (
-            <div className="flex items-center gap-1">
-              {halfControls.map((half) => (
-                <button
-                  key={`narrow-half-${half}`}
-                  onClick={() => setSelectedHalf(half)}
-                  className={`inline-flex min-w-[76px] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold [background-clip:padding-box] transition-[transform,box-shadow,color,background-color,border-color] duration-200 ${
-                    half === selectedHalf
-                      ? 'border-transparent bg-[#111827] text-white shadow-[0_10px_24px_rgba(17,24,39,0.18)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(17,24,39,0.22)] dark:bg-white dark:text-apple-dark1 dark:hover:shadow-[0_14px_28px_rgba(0,0,0,0.24)]'
-                      : 'border-black/5 bg-white/72 text-apple-gray6 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] hover:text-apple-dark1 dark:border-white/10 dark:bg-white/10 dark:text-apple-dark6 dark:hover:shadow-[0_8px_18px_rgba(0,0,0,0.22)] dark:hover:text-white'
-                  }`}
-                >
-                  {half === 1 ? '上半年' : '下半年'}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {controlOrder === 'dashboard' && isCompactLayout && quarterControls.length > 0 && (
-            <div className="flex flex-wrap justify-end gap-1">
-              {quarterControls.map((quarter) => (
-                <button
-                  key={`dashboard-quarter-${quarter}`}
-                  onClick={() => setSelectedQuarter(quarter)}
-                  className={`overflow-hidden rounded-full border px-3 py-1.5 text-xs font-semibold [background-clip:padding-box] transition-[transform,box-shadow,color,background-color,border-color] duration-200 ${
-                    quarter === selectedQuarter
-                      ? 'border-transparent bg-[#111827] text-white shadow-[0_10px_24px_rgba(17,24,39,0.18)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(17,24,39,0.22)] dark:bg-white dark:text-apple-dark1 dark:hover:shadow-[0_14px_28px_rgba(0,0,0,0.24)]'
-                      : 'border-black/5 bg-white/72 text-apple-gray6 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] hover:text-apple-dark1 dark:border-white/10 dark:bg-white/10 dark:text-apple-dark6 dark:hover:shadow-[0_8px_18px_rgba(0,0,0,0.22)] dark:hover:text-white'
-                  }`}
-                >
-                  Q{quarter}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {controlOrder === 'dashboard' && isCompactLayout && halfControls.length > 0 && (
-            <div className="flex flex-wrap justify-end gap-1">
-              {halfControls.map((half) => (
-                <button
-                  key={`dashboard-half-${half}`}
-                  onClick={() => setSelectedHalf(half)}
-                  className={`inline-flex min-w-[76px] items-center justify-center whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold [background-clip:padding-box] transition-[transform,box-shadow,color,background-color,border-color] duration-200 ${
-                    half === selectedHalf
-                      ? 'border-transparent bg-[#111827] text-white shadow-[0_10px_24px_rgba(17,24,39,0.18)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(17,24,39,0.22)] dark:bg-white dark:text-apple-dark1 dark:hover:shadow-[0_14px_28px_rgba(0,0,0,0.24)]'
-                      : 'border-black/5 bg-white/72 text-apple-gray6 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] hover:text-apple-dark1 dark:border-white/10 dark:bg-white/10 dark:text-apple-dark6 dark:hover:shadow-[0_8px_18px_rgba(0,0,0,0.22)] dark:hover:text-white'
-                  }`}
-                >
-                  {half === 1 ? '上半年' : '下半年'}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
       <div className="pb-2">
-        <div className={`relative ${shouldUseCompactGrid ? 'overflow-hidden' : 'overflow-x-auto'}`}>
-          <div className="relative mb-2 ml-4 flex h-4 text-xs text-apple-gray6 dark:text-apple-dark6" style={{ minWidth: shouldUseCompactGrid ? undefined : `${gridMinWidth}px` }}>
+        <div className="relative overflow-x-auto">
+          <div className="relative mb-2 ml-4 flex h-4 text-xs text-apple-gray6 dark:text-apple-dark6" style={{ minWidth: `${gridMinWidth}px` }}>
             {monthLabels.map((label) => (
               <div
                 key={`${label.month}-${label.weekIndex}`}
@@ -486,10 +447,10 @@ export default function HeatmapChart({
           </div>
 
           <div
-            className={`render-isolate screenshot-solid-panel screenshot-disable-blur relative grid overflow-hidden rounded-[24px] border border-white/70 bg-white/92 [background-clip:padding-box] shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] dark:border-transparent dark:[background-clip:border-box] dark:bg-[rgba(44,44,46,0.9)] dark:shadow-none ${shouldUseCompactGrid ? 'gap-[1px] p-2.5' : 'gap-[1px] p-3 lg:gap-[2px]'}`}
+            className="render-isolate screenshot-solid-panel screenshot-disable-blur relative grid overflow-hidden rounded-[24px] border border-white/70 bg-white/92 [background-clip:padding-box] shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] dark:border-transparent dark:[background-clip:border-box] dark:bg-[rgba(44,44,46,0.9)] dark:shadow-none gap-[1px] p-3 lg:gap-[2px]"
             style={{
-              gridTemplateColumns: shouldUseCompactGrid ? `12px repeat(${weeks.length}, minmax(0, 1fr))` : `16px repeat(${weeks.length}, minmax(12px, 1fr))`,
-              minWidth: shouldUseCompactGrid ? undefined : `${gridMinWidth}px`,
+              gridTemplateColumns: `16px repeat(${weeks.length}, minmax(12px, 1fr))`,
+              minWidth: `${gridMinWidth}px`,
             }}
           >
             {WEEKDAYS.map((label, index) => (
@@ -622,17 +583,28 @@ export default function HeatmapChart({
               document.body,
             )}
 
-          <div className="screenshot-solid-panel screenshot-disable-blur mt-4 flex flex-col gap-3 rounded-[24px] border border-white/70 bg-white/90 px-4 py-3 text-xs text-apple-gray6 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:flex-row sm:items-center sm:justify-between sm:gap-0 dark:border-transparent dark:[background-clip:border-box] dark:bg-[rgba(44,44,46,0.88)] dark:shadow-none dark:text-apple-dark6">
-            <div>
-              {getViewRangeLabel(viewMode, selectedYear, selectedQuarter, selectedHalf)}，学习{' '}
-              <span className="font-bold" style={{ color: DuoColors.featherGreen }}>
-                {activeDays}
-              </span>{' '}
-              天，获得{' '}
-              <span className="font-bold" style={{ color: DuoColors.beeYellow }}>
-                {totalXp.toLocaleString()}
-              </span>{' '}
-              XP
+          <div className="screenshot-solid-panel screenshot-disable-blur mt-4 flex flex-col gap-2 rounded-[24px] border border-white/70 bg-white/90 px-4 py-3 text-xs text-apple-gray6 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] sm:flex-row sm:items-center sm:justify-between sm:gap-0 dark:border-transparent dark:[background-clip:border-box] dark:bg-[rgba(44,44,46,0.88)] dark:shadow-none dark:text-apple-dark6">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>
+                {getViewRangeLabel(viewMode, selectedYear, selectedQuarter, selectedHalf)}，学习{' '}
+                <span className="font-bold" style={{ color: DuoColors.featherGreen }}>
+                  {activeDays}
+                </span>{' '}
+                天，获得{' '}
+                <span className="font-bold" style={{ color: DuoColors.beeYellow }}>
+                  {totalXp.toLocaleString()}
+                </span>{' '}
+                XP
+              </span>
+              {totalTime > 0 && (
+                <span>
+                  投入{' '}
+                  <span className="font-bold" style={{ color: '#1cb0f6' }}>
+                    {totalTime.toLocaleString()}
+                  </span>{' '}
+                  分钟
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-1">

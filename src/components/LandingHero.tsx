@@ -1,4 +1,4 @@
-import { Suspense, lazy, startTransition, useEffect, useRef, useState } from 'react';
+import { startTransition, useEffect, useRef, useState } from 'react';
 import { navigate } from 'astro:transitions/client';
 import AppIcon from './shared/AppIcon';
 import DuoWordmark from './shared/DuoWordmark';
@@ -32,6 +32,7 @@ import {
   ArrowUpIcon,
   QuestionIcon,
 } from './icons/CommonIcons';
+import LandingPreviewSection from './home/LandingPreviewSection';
 
 const USERNAME_STORAGE_KEY = 'duoeye_username';
 const USERDATA_STORAGE_KEY = 'duoeye_userdata';
@@ -64,7 +65,6 @@ const timeChartData = [
   { date: '周日', time: 0 },
 ];
 
-const LandingPreviewSection = lazy(() => import('./home/LandingPreviewSection'));
 
 const featureCards = [
   {
@@ -274,7 +274,6 @@ export default function LandingHero() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [shouldRenderPreview, setShouldRenderPreview] = useState(false);
   const scrollFrameRef = useRef<number | null>(null);
   const showBackToTopRef = useRef(false);
   const isScrolledRef = useRef(false);
@@ -387,27 +386,7 @@ export default function LandingHero() {
     };
   }, []);
 
-  useEffect(() => {
-    const previewSection = previewSectionRef.current;
-    if (!previewSection || shouldRenderPreview) return;
 
-    if (!('IntersectionObserver' in window)) {
-      setShouldRenderPreview(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        setShouldRenderPreview(true);
-        observer.disconnect();
-      },
-      { rootMargin: '520px 0px' },
-    );
-
-    observer.observe(previewSection);
-    return () => observer.disconnect();
-  }, [shouldRenderPreview]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -765,34 +744,16 @@ export default function LandingHero() {
         <section ref={previewSectionRef} id="preview" className={anchorSectionClassName}>
           <div className={`${sectionCardClassName} p-4 sm:p-6`}>
             <div aria-hidden="true" className={previewGlowClassName} />
-            {shouldRenderPreview ? (
-              <Suspense
-                fallback={
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-                    <div className={`${sectionCardStaticClassName} min-h-[320px] md:col-span-12`} />
-                    <div className={`${sectionCardClassName} min-h-[280px] md:col-span-6`} />
-                    <div className={`${sectionCardClassName} min-h-[280px] md:col-span-6`} />
-                  </div>
-                }
-              >
-                <LandingPreviewSection
-                  badgeClassName={badgeClassName}
-                  sectionCardClassName={sectionCardStaticClassName}
-                  xpChartData={xpChartData}
-                  timeChartData={timeChartData}
-                  landingHeatmapPreviewData={landingHeatmapPreviewData}
-                  totalXp={totalXp}
-                  totalTime={totalTime}
-                  averageXp={averageXp}
-                />
-              </Suspense>
-            ) : (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-                <div className={`${sectionCardStaticClassName} min-h-[320px] md:col-span-12`} />
-                <div className={`${sectionCardClassName} min-h-[280px] md:col-span-6`} />
-                <div className={`${sectionCardClassName} min-h-[280px] md:col-span-6`} />
-              </div>
-            )}
+            <LandingPreviewSection
+              badgeClassName={badgeClassName}
+              sectionCardClassName={sectionCardStaticClassName}
+              xpChartData={xpChartData}
+              timeChartData={timeChartData}
+              landingHeatmapPreviewData={landingHeatmapPreviewData}
+              totalXp={totalXp}
+              totalTime={totalTime}
+              averageXp={averageXp}
+            />
           </div>
         </section>
 

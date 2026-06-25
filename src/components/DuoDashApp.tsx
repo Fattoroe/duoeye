@@ -434,7 +434,10 @@ function DashboardSections({
         />
         <div className="relative p-6">
           <RenderBoundary label="学习热力图">
-            <HeatmapChart data={userData.yearlyXpHistory || []} />
+            <HeatmapChart
+              data={userData.yearlyXpHistory || []}
+              registrationYear={(() => { const m = userData.creationDate?.match(/(\d{4})/); return m ? Number(m[1]) : undefined; })()}
+            />
           </RenderBoundary>
         </div>
       </section>
