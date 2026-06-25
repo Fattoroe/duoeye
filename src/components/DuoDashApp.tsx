@@ -72,12 +72,33 @@ interface DuoDashAppProps {
   initialLoadError?: string;
 }
 
-function getMonthlyYears(data: Array<{ date: string; xp: number; time?: number }> | undefined): string[] {
-  if (!data?.length) return [];
+function getMonthlyYears(
+  data: Array<{ date: string; xp: number; time?: number }> | undefined,
+  registrationYear?: number
+): string[] {
+  const currentYear = new Date().getFullYear();
+  const yearSet = new Set<number>();
 
-  return Array.from(new Set(data.map((item) => item.date.slice(0, 4))))
-    .filter((year) => /^\d{4}$/.test(year))
-    .sort((a, b) => Number(b) - Number(a));
+  if (data?.length) {
+    data.forEach((item) => {
+      const yr = Number(item.date.slice(0, 4));
+      if (!Number.isNaN(yr) && yr > 2010 && yr <= currentYear) {
+        yearSet.add(yr);
+      }
+    });
+  }
+
+  const minYear = registrationYear && registrationYear > 2010 && registrationYear <= currentYear
+    ? registrationYear
+    : yearSet.size > 0 ? Math.min(...yearSet) : currentYear;
+
+  for (let y = minYear; y <= currentYear; y++) {
+    yearSet.add(y);
+  }
+
+  const sorted = Array.from(yearSet).sort((a, b) => b - a);
+  if (!sorted.length) sorted.push(currentYear);
+  return sorted.map(String);
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -267,8 +288,25 @@ function DashboardSections({
   onSelectWeeklyTimeRangeMode,
   animated = true,
 }: DashboardSectionsProps) {
-  const monthlyYears = getMonthlyYears(userData.yearlyXpHistory);
+  const registrationYear = (() => {
+    const m = userData.creationDate?.match(/(\d{4})/);
+    return m ? Number(m[1]) : undefined;
+  })();
+  const monthlyYears = getMonthlyYears(userData.yearlyXpHistory, registrationYear);
+  const [isMonthlyYearPanelOpen, setIsMonthlyYearPanelOpen] = useState(false);
+  const monthlyYearPanelRef = useRef<HTMLDivElement>(null);
   const animationClass = animated ? (isLoaded ? 'animate-fade-in-up' : 'opacity-0') : '';
+
+  useEffect(() => {
+    if (!isMonthlyYearPanelOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (monthlyYearPanelRef.current && !monthlyYearPanelRef.current.contains(e.target as Node)) {
+        setIsMonthlyYearPanelOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMonthlyYearPanelOpen]);
   const weeklyXpData =
     weeklyXpRangeMode === 'week'
       ? userData.weeklyXpHistory || []
@@ -346,16 +384,51 @@ function DashboardSections({
                     近 12 个月
                   </button>
 
-                  {monthlyYears.map((year) => (
-                    <button
-                      key={year}
-                      type="button"
-                      onClick={() => onSelectMonthlyYear(year)}
-                      className={`${getHeaderActionClassName(monthlyViewMode === 'year' && selectedMonthlyYear === year)} md:max-xl:px-2 md:max-xl:text-[11px]`}
-                    >
-                      {year}
-                    </button>
-                  ))}
+                  {/* Collapsible year selector */}
+                  {monthlyYears.length > 0 && (
+                    <div ref={monthlyYearPanelRef} className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setIsMonthlyYearPanelOpen((o) => !o)}
+                        className={`inline-flex w-[72px] items-center justify-between rounded-[12px] border px-3 py-2 text-xs font-semibold [background-clip:padding-box] transition-[transform,box-shadow,color,background-color,border-color] duration-200 ${
+                          isMonthlyYearPanelOpen || (monthlyViewMode === 'year')
+                            ? 'border-transparent bg-[#111827] text-white shadow-[0_10px_24px_rgba(17,24,39,0.18)] dark:bg-white dark:text-apple-dark1'
+                            : 'border-black/5 bg-white/72 text-apple-gray6 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] hover:text-apple-dark1 dark:border-white/10 dark:bg-white/10 dark:text-apple-dark6 dark:hover:shadow-[0_8px_18px_rgba(0,0,0,0.22)] dark:hover:text-white'
+                        }`}
+                      >
+                        <span>{monthlyViewMode === 'year' ? selectedMonthlyYear : monthlyYears[0]}</span>
+                        <svg
+                          className={`h-3 w-3 shrink-0 transition-transform duration-200 ${isMonthlyYearPanelOpen ? 'rotate-180' : ''}`}
+                          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+
+                      <div
+                        className={`absolute right-0 top-[calc(100%+6px)] z-30 w-[72px] overflow-hidden rounded-[18px] border border-black/[0.06] bg-white/96 shadow-[0_16px_36px_rgba(15,23,42,0.13)] backdrop-blur-sm transition-[opacity,transform,max-height] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] dark:border-white/10 dark:bg-[rgba(44,44,46,0.97)] ${
+                          isMonthlyYearPanelOpen ? 'max-h-[320px] opacity-100 translate-y-0' : 'pointer-events-none max-h-0 opacity-0 -translate-y-2'
+                        }`}
+                      >
+                        <div className="flex flex-col gap-0.5 p-1.5">
+                          {monthlyYears.map((year) => (
+                            <button
+                              key={year}
+                              type="button"
+                              onClick={() => { onSelectMonthlyYear(year); setIsMonthlyYearPanelOpen(false); }}
+                              className={`w-full rounded-[10px] px-2 py-2 text-center text-xs font-semibold transition-[background-color,color] duration-150 ${
+                                monthlyViewMode === 'year' && selectedMonthlyYear === year
+                                  ? 'bg-[#111827] text-white dark:bg-white dark:text-apple-dark1'
+                                  : 'text-apple-gray6 hover:bg-black/[0.05] hover:text-apple-dark1 dark:text-apple-dark6 dark:hover:bg-white/[0.08] dark:hover:text-white'
+                              }`}
+                            >
+                              {year}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               }
             >
@@ -695,7 +768,11 @@ export default function DuoDashApp({
   }, [emojiIconMode]);
 
   useEffect(() => {
-    const years = getMonthlyYears(userData?.yearlyXpHistory);
+    const regYear = (() => {
+      const m = userData?.creationDate?.match(/(\d{4})/);
+      return m ? Number(m[1]) : undefined;
+    })();
+    const years = getMonthlyYears(userData?.yearlyXpHistory, regYear);
     if (!years.length) {
       if (selectedMonthlyYear) setSelectedMonthlyYear('');
       return;

@@ -113,7 +113,7 @@ export default function MonthlyChart({ data, selectedYear, viewMode = 'year' }: 
   return (
     <div ref={containerRef} className="chart-shell h-full min-h-[220px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+        <AreaChart data={chartData} margin={{ top: 5, right: 25, bottom: 5, left: 0 }}>
           <defs>
             <linearGradient id="monthXpGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#1CB0F6" stopOpacity={0.3} />
