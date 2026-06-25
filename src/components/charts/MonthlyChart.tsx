@@ -13,12 +13,13 @@ interface MonthlyChartProps {
   data: Array<{ date: string; xp: number; time?: number }>;
   selectedYear?: string;
   viewMode?: 'year' | 'rolling12';
+  metric?: 'xp' | 'time';
 }
 
 interface MonthlyChartPoint {
   date: string;
   axisLabel: string;
-  xp: number;
+  value: number;
 }
 
 const MONTH_LABELS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
@@ -32,7 +33,12 @@ function formatRollingMonthLabelForNarrowScreen(value: string): string {
   return month ? `${month}月` : value;
 }
 
-export default function MonthlyChart({ data, selectedYear, viewMode = 'year' }: MonthlyChartProps) {
+export default function MonthlyChart({
+  data,
+  selectedYear,
+  viewMode = 'year',
+  metric = 'xp',
+}: MonthlyChartProps) {
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
@@ -55,36 +61,38 @@ export default function MonthlyChart({ data, selectedYear, viewMode = 'year' }: 
   }, []);
 
   const chartData = useMemo<MonthlyChartPoint[]>(() => {
+    const valKey = metric === 'time' ? 'time' : 'xp';
+
     if (viewMode === 'rolling12') {
-      const monthlyXp = new Map<string, number>();
+      const monthlyValues = new Map<string, number>();
       const today = new Date();
 
       for (let i = 11; i >= 0; i -= 1) {
         const monthDate = new Date(today.getFullYear(), today.getMonth() - i, 1);
         const monthKey = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`;
-        monthlyXp.set(monthKey, 0);
+        monthlyValues.set(monthKey, 0);
       }
 
       data.forEach((item) => {
         const monthKey = item.date.slice(0, 7);
-        if (!monthlyXp.has(monthKey)) return;
-        monthlyXp.set(monthKey, (monthlyXp.get(monthKey) || 0) + (item.xp || 0));
+        if (!monthlyValues.has(monthKey)) return;
+        monthlyValues.set(monthKey, (monthlyValues.get(monthKey) || 0) + (item[valKey] || 0));
       });
 
-      return Array.from(monthlyXp.entries()).map(([monthKey, xp]) => {
+      return Array.from(monthlyValues.entries()).map(([monthKey, val]) => {
         const [year, month] = monthKey.split('-');
         const fullLabel = formatRollingMonthLabel(new Date(Number(year), Number(month) - 1, 1));
 
         return {
           date: fullLabel,
           axisLabel: isExtraNarrowScreen ? formatRollingMonthLabelForNarrowScreen(fullLabel) : fullLabel,
-          xp,
+          value: val,
         };
       });
     }
 
     const year = selectedYear || new Date().getFullYear().toString();
-    const monthlyXp = new Array<number>(12).fill(0);
+    const monthlyValues = new Array<number>(12).fill(0);
 
     data.forEach((item) => {
       if (!item.date.startsWith(year)) return;
@@ -92,15 +100,15 @@ export default function MonthlyChart({ data, selectedYear, viewMode = 'year' }: 
       const month = Number(item.date.slice(5, 7));
       if (month < 1 || month > 12) return;
 
-      monthlyXp[month - 1] += item.xp || 0;
+      monthlyValues[month - 1] += item[valKey] || 0;
     });
 
     return MONTH_LABELS.map((label, index) => ({
       date: label,
       axisLabel: label,
-      xp: monthlyXp[index],
+      value: monthlyValues[index],
     }));
-  }, [data, isExtraNarrowScreen, selectedYear, viewMode]);
+  }, [data, isExtraNarrowScreen, selectedYear, viewMode, metric]);
 
   if (data.length === 0) {
     return (
@@ -110,14 +118,17 @@ export default function MonthlyChart({ data, selectedYear, viewMode = 'year' }: 
     );
   }
 
+  const themeColor = metric === 'time' ? '#14b8a6' : '#6366f1';
+  const gradientId = metric === 'time' ? 'monthTimeGradient' : 'monthXpGradient';
+
   return (
     <div ref={containerRef} className="chart-shell h-full min-h-[220px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} margin={{ top: 5, right: 25, bottom: 5, left: 0 }}>
           <defs>
-            <linearGradient id="monthXpGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#1CB0F6" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#1CB0F6" stopOpacity={0} />
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={themeColor} stopOpacity={0.3} />
+              <stop offset="95%" stopColor={themeColor} stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? '#334155' : '#e5e5e5'} />
@@ -143,7 +154,7 @@ export default function MonthlyChart({ data, selectedYear, viewMode = 'year' }: 
               return entry?.date || '';
             }}
             formatter={(value) => [
-              `${Number(value ?? 0).toLocaleString()} XP`,
+              `${Number(value ?? 0).toLocaleString()} ${metric === 'time' ? '分钟' : 'XP'}`,
               viewMode === 'rolling12' ? '最近 12 个月' : (selectedYear || '当年'),
             ]}
             contentStyle={{
@@ -155,11 +166,11 @@ export default function MonthlyChart({ data, selectedYear, viewMode = 'year' }: 
           />
           <Area
             type="monotone"
-            dataKey="xp"
-            stroke="#1CB0F6"
+            dataKey="value"
+            stroke={themeColor}
             strokeWidth={3}
-            fill="url(#monthXpGradient)"
-            dot={{ r: 3, fill: '#1CB0F6', strokeWidth: 2, stroke: '#fff' }}
+            fill={`url(#${gradientId})`}
+            dot={{ r: 3, fill: themeColor, strokeWidth: 2, stroke: '#fff' }}
             activeDot={{ r: 5 }}
           />
         </AreaChart>

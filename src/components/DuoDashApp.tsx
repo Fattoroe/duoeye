@@ -294,6 +294,7 @@ function DashboardSections({
   })();
   const monthlyYears = getMonthlyYears(userData.yearlyXpHistory, registrationYear);
   const [isMonthlyYearPanelOpen, setIsMonthlyYearPanelOpen] = useState(false);
+  const [monthlyMetric, setMonthlyMetric] = useState<'xp' | 'time'>('xp');
   const monthlyYearPanelRef = useRef<HTMLDivElement>(null);
   const animationClass = animated ? (isLoaded ? 'animate-fade-in-up' : 'opacity-0') : '';
 
@@ -369,13 +370,25 @@ function DashboardSections({
             </DashboardCard>
 
             <DashboardCard
-              icon={<EmojiIcon symbol="🗓" className="text-[1.35rem] leading-none" />}
-              title="月度经验对比"
+              icon={<EmojiIcon symbol={monthlyMetric === 'xp' ? "🗓" : "⏱️"} className="text-[1.35rem] leading-none" />}
+              title={monthlyMetric === 'xp' ? "月度经验对比" : "月度学习时间"}
               subtitle="支持查看指定年份和近 12 个月"
-              glowClassName="bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.14),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(236,72,153,0.1),transparent_46%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(129,140,248,0.2),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(236,72,153,0.16),transparent_44%)]"
+              glowClassName={monthlyMetric === 'xp'
+                ? "bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.14),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(236,72,153,0.1),transparent_46%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(129,140,248,0.2),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(236,72,153,0.16),transparent_44%)]"
+                : "bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.15),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(13,148,136,0.08),transparent_48%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.22),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(13,148,136,0.14),transparent_46%)]"
+              }
               className="md:col-span-2"
               actions={
                 <div className="flex flex-wrap items-center justify-end gap-1.5 md:max-xl:gap-1">
+                  {/* Switch Metric Button */}
+                  <button
+                    type="button"
+                    onClick={() => setMonthlyMetric(monthlyMetric === 'xp' ? 'time' : 'xp')}
+                    className={`${getHeaderActionClassName(monthlyMetric === 'time')} md:max-xl:px-2 md:max-xl:text-[11px]`}
+                  >
+                    {monthlyMetric === 'xp' ? '切换为时间' : '切换为经验'}
+                  </button>
+
                   <button
                     type="button"
                     onClick={onSelectRollingMonths}
@@ -436,6 +449,7 @@ function DashboardSections({
                 data={userData.yearlyXpHistory || []}
                 selectedYear={selectedMonthlyYear}
                 viewMode={monthlyViewMode}
+                metric={monthlyMetric}
               />
             </DashboardCard>
 
@@ -493,7 +507,7 @@ function DashboardSections({
             title="其他课程"
             subtitle="查看你的非语言类科目学习详情"
             className="h-full"
-            glowClassName="bg-[radial-gradient(circle_at_top_left,rgba(28,176,246,0.12),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(165,114,247,0.08),transparent_48%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(28,176,246,0.18),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(165,114,247,0.12),transparent_46%)]"
+            glowClassName="bg-[radial-gradient(circle_at_top_left,rgba(244,63,94,0.12),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(225,29,72,0.08),transparent_48%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(244,63,94,0.18),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(225,29,72,0.12),transparent_46%)]"
           >
             <SubjectDistribution courses={userData.courses} totalXp={userData.totalXp} />
           </DashboardCard>
@@ -503,7 +517,7 @@ function DashboardSections({
       <section className={`deferred-section group ${surfaceClassName} transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_22px_42px_rgba(15,23,42,0.1)] dark:hover:shadow-[0_22px_42px_rgba(0,0,0,0.28)] ${animationClass}`} style={animated ? { animationDelay: '0.32s' } : undefined}>
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-100 transition-opacity duration-300 group-hover:opacity-100 bg-[radial-gradient(circle_at_top_left,rgba(88,204,2,0.12),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(28,176,246,0.08),transparent_40%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(88,204,2,0.18),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(28,176,246,0.14),transparent_42%)]"
+          className="pointer-events-none absolute inset-0 opacity-100 transition-opacity duration-300 group-hover:opacity-100 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(88,204,2,0.08),transparent_40%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.18),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(88,204,2,0.14),transparent_42%)]"
         />
         <div className="relative p-6">
           <RenderBoundary label="学习热力图">
