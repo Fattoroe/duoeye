@@ -21,7 +21,7 @@ export default function WeeklyChart({ data }: WeeklyChartProps) {
     <div className="chart-shell flex h-full min-h-0 w-full flex-col">
       <div className="min-h-[180px] flex-1">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+          <AreaChart data={data} margin={{ top: 14, right: 10, bottom: 5, left: 0 }}>
             <defs>
               <linearGradient id="xpGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#58CC02" stopOpacity={0.3} />

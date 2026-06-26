@@ -136,7 +136,7 @@ export default function MonthlyChart({
     <div ref={containerRef} className="chart-shell flex h-full min-h-[220px] w-full flex-col">
       <div className="flex-1">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 5, right: 25, bottom: 5, left: 0 }}>
+          <AreaChart data={chartData} margin={{ top: 14, right: 25, bottom: 5, left: 0 }}>
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={themeColor} stopOpacity={0.3} />

@@ -2,7 +2,6 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -57,7 +56,6 @@ function PreviewChartCard({
   gradientId,
   footer,
   icon,
-  referenceLine,
   sectionCardClassName,
 }: {
   title: string;
@@ -69,7 +67,6 @@ function PreviewChartCard({
   gradientId: string;
   footer: string;
   icon: React.ReactNode;
-  referenceLine?: number;
   sectionCardClassName: string;
 }) {
   return (
@@ -82,7 +79,7 @@ function PreviewChartCard({
       </div>
       <p className="mb-3 text-sm leading-6 text-apple-gray6 dark:text-apple-dark6">{description}</p>
       <ResponsiveContainer width="100%" height={168}>
-        <AreaChart data={data} margin={{ top: 8, right: 4, left: -16, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 14, right: 4, left: -16, bottom: 0 }}>
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor={color} stopOpacity={0.25} />
@@ -92,7 +89,6 @@ function PreviewChartCard({
           <CartesianGrid strokeDasharray="3 3" stroke="#edf2f7" vertical={false} />
           <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
           <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-          {referenceLine ? <ReferenceLine y={referenceLine} stroke={color} strokeDasharray="4 4" strokeOpacity={0.45} /> : null}
           <Tooltip content={<TooltipCard color={color} unit={unit} />} cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: '4 4' }} />
           <Area
             type="monotone"
@@ -152,7 +148,6 @@ export default function LandingPreviewSection({
             gradientId="landing-xp-gradient"
             footer={`本周共获得 ${totalXp} XP`}
             icon={<EmojiIcon symbol="⚡" className="text-base leading-none" tone="inherit" />}
-            referenceLine={averageXp}
             sectionCardClassName={sectionCardClassName}
           />
         </div>
