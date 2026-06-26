@@ -169,13 +169,8 @@ const { title } = Astro.props;
   }
 
   .deferred-section {
-    content-visibility: auto;
-    contain-intrinsic-size: 960px;
-  }
-
-  html.screenshot-mode .deferred-section {
-    content-visibility: visible !important;
-    contain-intrinsic-size: auto !important;
+    content-visibility: visible;
+    contain-intrinsic-size: auto;
   }
 
   html.animations-off {

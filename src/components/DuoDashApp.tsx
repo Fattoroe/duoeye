@@ -458,7 +458,7 @@ function DashboardSections({
               title="年度经验对比"
               subtitle="按年份查看累计 XP"
               glowClassName="bg-[radial-gradient(circle_at_top_left,rgba(165,114,247,0.14),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(192,132,252,0.08),transparent_48%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(165,114,247,0.2),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(192,132,252,0.14),transparent_46%)]"
-              badge="历史"
+              badge="经验"
               badgeClassName="inline-flex items-center rounded-full bg-[#a572f7]/10 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-[#7b4bc2] dark:bg-[#a572f7]/15 dark:text-[#d6b8ff]"
             >
               <YearlyChart data={userData.yearlyXpHistory || []} />
