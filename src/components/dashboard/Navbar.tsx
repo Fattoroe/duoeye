@@ -44,7 +44,7 @@ const groupedIconButtonClassName =
   'group flex h-9 w-9 items-center justify-center rounded-[16px] text-inherit transition-[transform,box-shadow,color,background-color,opacity] duration-200 hover:-translate-y-0.5 hover:bg-black/[0.04] hover:text-apple-dark1 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:bg-transparent disabled:hover:shadow-none dark:hover:bg-white/[0.08] dark:hover:text-white dark:hover:shadow-[0_8px_18px_rgba(0,0,0,0.22)]';
 
 const compactMenuItemClassName =
-  'flex min-h-[60px] flex-col items-center justify-center rounded-[18px] border border-black/5 bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(248,249,252,0.92))] px-3 py-1.5 text-center shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(15,23,42,0.08)] max-[430px]:min-h-[54px] max-[430px]:rounded-[16px] max-[430px]:px-2.5 max-[430px]:py-1.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(58,58,60,0.72),rgba(34,34,36,0.9))] dark:hover:shadow-[0_16px_28px_rgba(0,0,0,0.2)]';
+  'flex min-h-[68px] flex-col items-center justify-center rounded-[24px] border border-black/5 bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(248,249,252,0.92))] px-2 py-2 text-center shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(15,23,42,0.08)] xs:px-2.5 sm:px-4 dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(58,58,60,0.72),rgba(34,34,36,0.9))] dark:hover:shadow-[0_16px_28px_rgba(0,0,0,0.2)]';
 
 function getNavbarActionIconClassName(variant: 'refresh' | 'sparkle' | 'pause' | 'camera' | 'emoji' | 'exit'): string {
   const base = 'h-4 w-4 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform';
@@ -354,94 +354,6 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
           </div>
         </div>
 
-        <div
-          ref={compactMenuRef}
-          className={`overflow-hidden transition-[max-height,opacity,transform,margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] min-[560px]:hidden ${
-            isCompactMenuOpen ? 'mt-0.5 max-h-[250px] translate-y-0 opacity-100' : 'pointer-events-none max-h-0 -translate-y-2 opacity-0'
-          }`}
-        >
-          <div className="grid grid-cols-2 gap-1.5 rounded-[20px] bg-[rgba(255,255,255,0.7)] p-0.5 dark:bg-white/[0.04]">
-            <button
-              type="button"
-              onClick={() => {
-                onRefresh();
-                setIsCompactMenuOpen(false);
-              }}
-              disabled={isRefreshing}
-              className={`${compactMenuItemClassName} disabled:cursor-not-allowed disabled:opacity-55`}
-            >
-              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
-                {isRefreshing ? (
-                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" className="opacity-25" />
-                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="opacity-90" />
-                  </svg>
-                ) : (
-                  <RefreshIcon className="h-4 w-4" />
-                )}
-              </div>
-              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">刷新</div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                onToggleAnimations();
-                setIsCompactMenuOpen(false);
-              }}
-              className={compactMenuItemClassName}
-            >
-              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
-                {animationsEnabled ? <SparkleIcon className="h-4 w-4" /> : <PauseIcon className="h-4 w-4" />}
-              </div>
-              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">动效</div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                onScreenshot();
-                setIsCompactMenuOpen(false);
-              }}
-              disabled={isScreenshotting}
-              className={`${compactMenuItemClassName} disabled:cursor-not-allowed disabled:opacity-55`}
-            >
-              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
-                {isScreenshotting ? (
-                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" className="opacity-25" />
-                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="opacity-90" />
-                  </svg>
-                ) : (
-                  <CameraIcon className="h-4 w-4" />
-                )}
-              </div>
-              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">截图</div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                onToggleEmojiIconMode();
-                setIsCompactMenuOpen(false);
-              }}
-              className={compactMenuItemClassName}
-            >
-              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
-                <EmojiModeIcon className="h-4 w-4" />
-              </div>
-              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">图标</div>
-            </button>
-
-            <button type="button" onClick={onLogout} className={`${compactMenuItemClassName} col-span-2`}>
-              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
-                <ExitIcon className="h-4 w-4" />
-              </div>
-              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">退出</div>
-            </button>
-          </div>
-        </div>
-
         <div className="hidden items-center justify-end gap-3 min-[768px]:flex">
           <div className="flex items-center gap-2">
             <span className="hidden whitespace-nowrap text-xs font-medium text-apple-gray6 dark:text-white/55 min-[980px]:inline">
@@ -515,6 +427,103 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
           <button type="button" onClick={onLogout} className={iconButtonClassName} title="退出" aria-label="退出">
             <ExitIcon className={getNavbarActionIconClassName('exit')} />
           </button>
+        </div>
+      </div>
+
+      <div
+        ref={compactMenuRef}
+        className={`overflow-hidden transition-[max-height,opacity,transform,margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] min-[560px]:hidden ${
+          isCompactMenuOpen ? 'mt-3 max-h-[300px] opacity-100 translate-y-0' : 'pointer-events-none max-h-0 opacity-0 -translate-y-2'
+        }`}
+      >
+        <div className="mx-auto max-w-[1560px] rounded-[28px] bg-[rgba(255,255,255,0.9)] px-4 py-4 shadow-[0_6px_16px_rgba(15,23,42,0.04)] dark:bg-[rgba(44,44,46,0.82)]">
+          <div className="grid grid-cols-6 gap-2 sm:gap-2.5">
+            <button
+              type="button"
+              onClick={() => {
+                onRefresh();
+                setIsCompactMenuOpen(false);
+              }}
+              disabled={isRefreshing}
+              className={`${compactMenuItemClassName} col-span-2 disabled:cursor-not-allowed disabled:opacity-55`}
+            >
+              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
+                {isRefreshing ? (
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" className="opacity-25" />
+                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="opacity-90" />
+                  </svg>
+                ) : (
+                  <RefreshIcon className="h-4 w-4" />
+                )}
+              </div>
+              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">刷新</div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onToggleAnimations();
+                setIsCompactMenuOpen(false);
+              }}
+              className={`${compactMenuItemClassName} col-span-2`}
+            >
+              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
+                {animationsEnabled ? <SparkleIcon className="h-4 w-4" /> : <PauseIcon className="h-4 w-4" />}
+              </div>
+              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">动效</div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onToggleEmojiIconMode();
+                setIsCompactMenuOpen(false);
+              }}
+              className={`${compactMenuItemClassName} col-span-2`}
+            >
+              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
+                <EmojiModeIcon className="h-4 w-4" />
+              </div>
+              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">图标</div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onScreenshot();
+                setIsCompactMenuOpen(false);
+              }}
+              disabled={isScreenshotting}
+              className={`${compactMenuItemClassName} col-span-3 disabled:cursor-not-allowed disabled:opacity-55`}
+            >
+              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
+                {isScreenshotting ? (
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" className="opacity-25" />
+                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="opacity-90" />
+                  </svg>
+                ) : (
+                  <CameraIcon className="h-4 w-4" />
+                )}
+              </div>
+              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">截图</div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onLogout();
+                setIsCompactMenuOpen(false);
+              }}
+              className={`${compactMenuItemClassName} col-span-3`}
+            >
+              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
+                <ExitIcon className="h-4 w-4" />
+              </div>
+              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">退出</div>
+            </button>
+          </div>
         </div>
       </div>
     </nav>

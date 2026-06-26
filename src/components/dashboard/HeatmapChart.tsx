@@ -248,7 +248,13 @@ export default function HeatmapChart({
   const totalXp = useMemo(() => allDates.reduce((sum, item) => sum + Math.max(item.xp, 0), 0), [allDates]);
   const totalTime = useMemo(() => allDates.reduce((sum, item) => sum + Math.max(item.time ?? 0, 0), 0), [allDates]);
   const activeDays = useMemo(() => allDates.filter((item) => item.xp > 0).length, [allDates]);
-  const gridMinWidth = useMemo(() => Math.max(320, weeks.length * 14 + 28), [weeks.length]);
+  const minCellWidth = useMemo(() => (viewMode === 'quarter' ? 10 : 12), [viewMode]);
+  const gridMinWidth = useMemo(() => {
+    if (viewMode === 'quarter') {
+      return weeks.length * 10 + 20; // 14 weeks * 10px + 20px = 160px min-width, easily fits on mobile screens
+    }
+    return Math.max(320, weeks.length * 14 + 28);
+  }, [weeks.length, viewMode]);
   const quarterControls = viewMode === 'quarter' ? [1, 2, 3, 4] : [];
   const halfControls = viewMode === 'half' ? [1, 2] : [];
 
@@ -408,7 +414,7 @@ export default function HeatmapChart({
 
             {/* Vertical dropdown panel – same width as trigger */}
             <div
-              className={`absolute right-0 top-[calc(100%+6px)] z-30 w-[72px] overflow-hidden rounded-[18px] border border-black/[0.06] bg-white/96 shadow-[0_16px_36px_rgba(15,23,42,0.13)] backdrop-blur-sm transition-[opacity,transform,max-height] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] dark:border-white/10 dark:bg-[rgba(44,44,46,0.97)] ${
+              className={`absolute right-0 top-[calc(100%+6px)] z-30 w-[72px] overflow-hidden rounded-[18px] border border-black/10 bg-white shadow-[0_16px_36px_rgba(15,23,42,0.15)] transition-[opacity,transform,max-height] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] dark:border-white/10 dark:bg-[#2c2c2e] ${
                 isYearPanelOpen ? 'max-h-[320px] opacity-100 translate-y-0' : 'pointer-events-none max-h-0 opacity-0 -translate-y-2'
               }`}
             >
@@ -433,7 +439,7 @@ export default function HeatmapChart({
       </div>
 
       <div className="pb-2">
-        <div className="relative overflow-x-auto">
+        <div className={`relative ${viewMode === 'quarter' ? 'overflow-x-hidden' : 'overflow-x-auto'}`}>
           <div className="relative mb-2 ml-4 flex h-4 text-xs text-apple-gray6 dark:text-apple-dark6" style={{ minWidth: `${gridMinWidth}px` }}>
             {monthLabels.map((label) => (
               <div
@@ -449,7 +455,7 @@ export default function HeatmapChart({
           <div
             className="render-isolate screenshot-solid-panel screenshot-disable-blur relative grid overflow-hidden rounded-[24px] border border-white/70 bg-white/92 [background-clip:padding-box] shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] dark:border-transparent dark:[background-clip:border-box] dark:bg-[rgba(44,44,46,0.9)] dark:shadow-none gap-[1px] p-3 lg:gap-[2px]"
             style={{
-              gridTemplateColumns: `16px repeat(${weeks.length}, minmax(12px, 1fr))`,
+              gridTemplateColumns: `16px repeat(${weeks.length}, minmax(${minCellWidth}px, 1fr))`,
               minWidth: `${gridMinWidth}px`,
             }}
           >

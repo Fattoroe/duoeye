@@ -419,7 +419,7 @@ function DashboardSections({
                       </button>
 
                       <div
-                        className={`absolute right-0 top-[calc(100%+6px)] z-30 w-[72px] overflow-hidden rounded-[18px] border border-black/[0.06] bg-white/96 shadow-[0_16px_36px_rgba(15,23,42,0.13)] backdrop-blur-sm transition-[opacity,transform,max-height] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] dark:border-white/10 dark:bg-[rgba(44,44,46,0.97)] ${
+                        className={`absolute right-0 top-[calc(100%+6px)] z-30 w-[72px] overflow-hidden rounded-[18px] border border-black/10 bg-white shadow-[0_16px_36px_rgba(15,23,42,0.15)] transition-[opacity,transform,max-height] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] dark:border-white/10 dark:bg-[#2c2c2e] ${
                           isMonthlyYearPanelOpen ? 'max-h-[320px] opacity-100 translate-y-0' : 'pointer-events-none max-h-0 opacity-0 -translate-y-2'
                         }`}
                       >
@@ -1249,7 +1249,7 @@ export default function DuoDashApp({
               多邻国学习数据可视化工具。
             </p>
             <p className="mt-6 text-xs text-apple-gray6/80 dark:text-apple-dark6/80">
-              © {new Date().getFullYear()} DuoEye · 非官方第三方工具
+              <span style={{ fontFamily: 'Arial, sans-serif' }}>©</span> {new Date().getFullYear()} DuoEye · 非官方第三方工具
             </p>
           </div>
         </footer>

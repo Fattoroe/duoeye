@@ -792,7 +792,7 @@ export default function LandingHero() {
             多邻国学习数据可视化工具。输入用户名，快速生成和首页一致风格的数据仪表盘。
           </p>
           <p className="mt-6 text-xs text-apple-gray6/80 dark:text-apple-dark6/80">
-            © {new Date().getFullYear()} DuoEye · 非官方第三方工具
+            <span style={{ fontFamily: 'Arial, sans-serif' }}>©</span> {new Date().getFullYear()} DuoEye · 非官方第三方工具
           </p>
         </div>
       </footer>
