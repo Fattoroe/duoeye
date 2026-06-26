@@ -121,11 +121,11 @@ export default function LandingPreviewSection({
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <span className={badgeClassName}>PREVIEW</span>
-          <h2 className="mt-4 text-[clamp(1.9rem,3vw,3rem)] font-semibold tracking-tight text-apple-dark1 dark:text-white">
-            首页预览也沿用仪表盘的卡片系统
+          <h2 className="mt-4 text-[clamp(1.9rem,3vw,3rem)] md:max-lg:text-[25px] font-semibold tracking-tight text-apple-dark1 dark:text-white">
+            首页预览也沿用仪表盘的卡片<span className="whitespace-nowrap">系统</span>
           </h2>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <span className={badgeClassName}>热力图</span>
           <span className={badgeClassName}>经验曲线</span>
           <span className={badgeClassName}>学习时长</span>

@@ -174,7 +174,7 @@ export default function TodayOverview({ userData }: TodayOverviewProps) {
           >
             <div className="text-xs font-medium text-apple-gray6 dark:text-apple-dark6">{item.label}</div>
             <div className={`mt-2 flex flex-col gap-0.5 xl:flex-row xl:items-baseline xl:justify-between xl:gap-1.5 text-lg font-semibold tracking-tight text-apple-dark1 dark:text-white ${item.label === '总投入时间' ? 'md:max-lg:whitespace-pre-line md:max-lg:leading-snug' : ''}`}>
-              <span>
+              <span className="secondary-stat-value lg:whitespace-nowrap">
                 {item.label === '总投入时间' ? (
                   <>
                     <span className="md:max-lg:hidden">{item.value}</span>
