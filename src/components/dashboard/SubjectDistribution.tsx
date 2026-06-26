@@ -79,7 +79,7 @@ export default function SubjectDistribution({ courses, totalXp }: SubjectDistrib
               <div className="flex items-end justify-between gap-3">
                 <div className="flex flex-col">
                   <span className="flex items-baseline gap-1.5 tracking-tight" style={{ color }}>
-                    <span className="text-2xl font-black">
+                    <span className="text-xl font-black">
                       {course.xp.toLocaleString()}{' '}
                       <span className="text-sm">XP</span>
                     </span>

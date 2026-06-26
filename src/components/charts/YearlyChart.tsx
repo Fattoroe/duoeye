@@ -99,7 +99,7 @@ export default function YearlyChart({ data }: YearlyChartProps) {
       </div>
       {totalYearlyXp > 0 && (
         <div className="pt-1 text-center text-xs text-apple-gray6 dark:text-slate-400">
-          累计获得 <span className="font-bold text-duo-purple">{totalYearlyXp.toLocaleString()} XP</span>
+          累计获得 <span className="font-bold" style={{ color: '#A572F7' }}>{totalYearlyXp.toLocaleString()} XP</span>
         </div>
       )}
     </div>

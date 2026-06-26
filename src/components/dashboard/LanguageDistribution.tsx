@@ -174,7 +174,7 @@ export default function LanguageDistribution({ courses, totalXp }: LanguageDistr
               <div className="mb-2 flex items-end justify-between gap-3">
                 <div className="flex flex-col">
                   <span className="flex items-baseline gap-1.5 tracking-tight" style={{ color }}>
-                    <span className="text-2xl font-black">
+                    <span className="text-xl font-black">
                       {course.xp.toLocaleString()}
                       <span className="ml-1 text-sm">XP</span>
                     </span>
