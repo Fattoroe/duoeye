@@ -1,6 +1,13 @@
 import { useMemo } from 'react';
+import type { ReactNode } from 'react';
 import type { Course } from '../../types';
 import EmojiIcon from '../icons/EmojiIcon';
+import {
+  formatCompactMinutes,
+  formatSharePercentage,
+  getCourseMinutes,
+  getCoursesTotalMinutes,
+} from '../../utils/courseMetrics';
 
 interface LanguageDistributionProps {
   courses: Course[];
@@ -83,32 +90,33 @@ const LANGUAGE_FLAGS: Record<string, string> = {
 
 function resolveLanguageName(code: string): string {
   const map: Record<string, string> = {
-    'en': '英语',
+    en: '英语',
     'zh-CN': '中文',
-    'zh': '中文',
-    'ja': '日语',
-    'ko': '韩语',
-    'fr': '法语',
-    'de': '德语',
-    'es': '西班牙语',
-    'it': '意大利语',
-    'ru': '俄语',
+    zh: '中文',
+    ja: '日语',
+    ko: '韩语',
+    fr: '法语',
+    de: '德语',
+    es: '西班牙语',
+    it: '意大利语',
+    ru: '俄语',
   };
+
   return map[code] || code;
 }
 
-function resolveLanguageLabel(course: Course): React.ReactNode {
+function resolveLanguageLabel(course: Course): ReactNode {
   const target = LANGUAGE_NAMES[course.learningLanguage] || TITLE_ALIASES[course.title] || course.title;
   const flagCode = LANGUAGE_FLAGS[course.learningLanguage];
 
   return (
     <div className="flex items-center gap-2.5 whitespace-nowrap">
       {flagCode ? (
-        <img 
-          src={`https://flagcdn.com/w40/${flagCode}.png`} 
+        <img
+          src={`https://flagcdn.com/w40/${flagCode}.png`}
           alt={target}
           crossOrigin="anonymous"
-          className="h-[14px] w-[21px] rounded-[2px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] object-cover"
+          className="h-[14px] w-[21px] rounded-[2px] object-cover shadow-[0_1px_3px_rgba(0,0,0,0.1)]"
         />
       ) : (
         <EmojiIcon symbol="🌐" className="text-sm" />
@@ -126,10 +134,14 @@ function resolveLanguageLabel(course: Course): React.ReactNode {
 }
 
 export default function LanguageDistribution({ courses, totalXp }: LanguageDistributionProps) {
-  const sortedCourses = useMemo(() => 
-    courses.filter(c => !['chess', 'math', 'music'].includes(String(c.subject || '').toLowerCase()))
-    .sort((a, b) => b.xp - a.xp), 
-  [courses]);
+  const sortedCourses = useMemo(
+    () =>
+      courses
+        .filter((course) => !['chess', 'math', 'music'].includes(String(course.subject || '').toLowerCase()))
+        .sort((a, b) => b.xp - a.xp),
+    [courses],
+  );
+  const totalTime = useMemo(() => getCoursesTotalMinutes(courses), [courses]);
 
   const colors = ['#58CC02', '#1CB0F6', '#A572F7', '#FF9600', '#FF4B4B'];
 
@@ -139,13 +151,15 @@ export default function LanguageDistribution({ courses, totalXp }: LanguageDistr
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <EmojiIcon symbol="🌍" className="text-[1.3rem] leading-none" />
-          <h2 className="text-lg font-semibold text-apple-dark1 dark:text-white whitespace-nowrap">语言分布</h2>
+          <h2 className="whitespace-nowrap text-lg font-semibold text-apple-dark1 dark:text-white">语言分布</h2>
         </div>
       </div>
 
       <div className="flex flex-grow flex-col space-y-4">
         {sortedCourses.map((course, index) => {
-          const percentage = totalXp > 0 ? Math.round((course.xp / totalXp) * 100) : 0;
+          const percentage = totalXp > 0 ? (course.xp / totalXp) * 100 : 0;
+          const timeMinutes = getCourseMinutes(course);
+          const timePercentage = totalTime > 0 ? (timeMinutes / totalTime) * 100 : 0;
           const color = colors[index % colors.length];
 
           return (
@@ -153,27 +167,48 @@ export default function LanguageDistribution({ courses, totalXp }: LanguageDistr
               key={course.id}
               className="group flex flex-grow flex-col justify-center rounded-2xl px-2 py-2 transition-[transform,box-shadow,background-color] duration-300 hover:-translate-y-1 hover:bg-black/[0.02] hover:shadow-[0_10px_20px_rgba(15,23,42,0.06)] dark:hover:bg-white/[0.03] dark:hover:shadow-[0_12px_22px_rgba(0,0,0,0.2)]"
             >
-              <div className="mb-2 flex items-center justify-between gap-4">
-                <div className="text-sm font-medium text-apple-dark1 dark:text-white min-w-0">{resolveLanguageLabel(course)}</div>
-                <span className="text-sm font-semibold shrink-0" style={{ color }}>
-                  {percentage}%
-                </span>
+              <div className="mb-2 min-w-0 text-sm font-medium text-apple-dark1 dark:text-white">
+                {resolveLanguageLabel(course)}
+              </div>
+
+              <div className="mb-2 flex items-end justify-between gap-3">
+                <div className="flex flex-col">
+                  <span className="flex items-baseline gap-1.5 tracking-tight" style={{ color }}>
+                    <span className="text-2xl font-black">
+                      {course.xp.toLocaleString()}
+                      <span className="ml-1 text-sm">XP</span>
+                    </span>
+                    <span className="text-xs font-semibold tracking-normal text-apple-gray6 dark:text-apple-dark6">
+                      ({formatCompactMinutes(timeMinutes)})
+                    </span>
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-apple-gray6 dark:text-apple-dark6">
+                    Total XP (Time)
+                  </span>
+                </div>
+
+                <div className="flex flex-col items-end text-right">
+                  <span className="flex items-baseline gap-1">
+                    <span className="text-[13px] font-semibold" style={{ color }}>
+                      {formatSharePercentage(percentage)}
+                    </span>
+                    <span className="text-[11px] font-medium text-apple-gray6 dark:text-apple-dark6">
+                      ({formatSharePercentage(timePercentage)})
+                    </span>
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-apple-gray6 dark:text-apple-dark6">
+                    Share (Time)
+                  </span>
+                </div>
               </div>
 
               <div className="h-2.5 overflow-hidden rounded-full bg-apple-gray3 dark:bg-apple-dark3">
                 <div
                   className="relative h-full overflow-hidden rounded-full transition-[width,filter] duration-700 ease-out group-hover:brightness-[1.03]"
-                  style={{ width: `${percentage}%`, backgroundColor: color }}
+                  style={{ width: `${Math.min(percentage, 100)}%`, backgroundColor: color }}
                 >
-                  <div className="absolute inset-0 opacity-60 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-60" />
                 </div>
-              </div>
-
-              <div className="mt-1.5 flex items-center text-xs text-apple-gray6 dark:text-apple-dark6">
-                <span className="flex items-center gap-1">
-                  <span className="font-medium">{course.xp.toLocaleString()}</span>
-                  XP
-                </span>
               </div>
             </div>
           );

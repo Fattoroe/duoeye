@@ -32,12 +32,8 @@ export default function YearlyChart({ data }: YearlyChartProps) {
       .sort((a, b) => a.year.localeCompare(b.year));
   }, [data]);
 
-  const growthRate = useMemo(() => {
-    if (yearlyData.length < 2) return null;
-    const current = yearlyData[yearlyData.length - 1].xp;
-    const previous = yearlyData[yearlyData.length - 2].xp;
-    if (previous === 0) return null;
-    return ((current / previous) * 100 - 100).toFixed(0);
+  const totalYearlyXp = useMemo(() => {
+    return yearlyData.reduce((sum, item) => sum + item.xp, 0);
   }, [yearlyData]);
 
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
@@ -101,15 +97,9 @@ export default function YearlyChart({ data }: YearlyChartProps) {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      {yearlyData.length > 1 && growthRate && (
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <span
-            className={`rounded-full px-2 py-1 text-xs font-medium ${
-              parseFloat(growthRate) >= 0 ? 'bg-duo-green/20 text-duo-green' : 'bg-red-500/20 text-red-500'
-            }`}
-          >
-            {parseFloat(growthRate) >= 0 ? '↑' : '↓'} {Math.abs(parseFloat(growthRate))}%
-          </span>
+      {totalYearlyXp > 0 && (
+        <div className="pt-1 text-center text-xs text-apple-gray6 dark:text-slate-400">
+          累计获得 <span className="font-bold text-duo-purple">{totalYearlyXp.toLocaleString()} XP</span>
         </div>
       )}
     </div>
