@@ -56,7 +56,7 @@ export default function DuoWordmark({ size = 'md', className = '' }: DuoWordmark
       width={style.width}
       height={style.height}
       viewBox={`0 0 ${style.width} ${style.height}`}
-      className={className}
+      className={`text-[#0f172a] dark:text-[#f8fafc] ${className}`}
       aria-label="DuoEye"
       role="img"
     >
@@ -78,7 +78,7 @@ export default function DuoWordmark({ size = 'md', className = '' }: DuoWordmark
       <text
         x="0"
         y={style.duoY}
-        fill={`url(#${duoGradientId})`}
+        fill="currentColor"
         fontFamily='SimSun, "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", serif'
         fontSize={style.duoSize}
         fontWeight="650"
