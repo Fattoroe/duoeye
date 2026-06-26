@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { UserData } from '../types';
 import { Component, type ErrorInfo } from 'react';
-import { toCanvas } from 'html-to-image';
 import AppIcon from './shared/AppIcon';
 import DuoWordmark from './shared/DuoWordmark';
 import AchievementsSection from './achievements/AchievementsSection';
@@ -37,9 +36,6 @@ const USERNAME_STORAGE_KEY = 'duoeye_username';
 const USERDATA_STORAGE_KEY = 'duoeye_userdata';
 const LAST_LOADED_AT_STORAGE_KEY = 'duoeye_last_loaded_at';
 const LAST_TIMEZONE_STORAGE_KEY = 'duoeye_last_timezone';
-const MAX_SCREENSHOT_BYTES = 10 * 1024 * 1024;
-const MAX_SCREENSHOT_CANVAS_PIXELS = 12_000_000;
-const SCREENSHOT_BASE_PIXEL_RATIO = 1.6;
 
 function getInitialEmojiIconMode(): EmojiIconMode {
   if (typeof window === 'undefined') return 'emoji';
@@ -180,13 +176,8 @@ interface DashboardSectionsProps {
   animated?: boolean;
 }
 
-interface ScreenshotFile {
-  blob: Blob;
-  extension: 'png' | 'jpg';
-}
-
 const surfaceClassName =
-  'render-isolate screenshot-solid-surface relative rounded-[30px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,249,252,0.94))] shadow-[0_12px_28px_rgba(15,23,42,0.05)] dark:border-transparent dark:[background-clip:border-box] dark:bg-[linear-gradient(180deg,rgba(58,58,60,0.92),rgba(28,28,30,0.96))] dark:shadow-none';
+  'render-isolate relative rounded-[30px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,249,252,0.94))] shadow-[0_12px_28px_rgba(15,23,42,0.05)] dark:border-transparent dark:[background-clip:border-box] dark:bg-[linear-gradient(180deg,rgba(58,58,60,0.92),rgba(28,28,30,0.96))] dark:shadow-none';
 
 const headerBadgeClassName =
   'inline-flex items-center rounded-full border border-black/5 bg-white/88 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-apple-gray6 shadow-[0_4px_12px_rgba(15,23,42,0.04)] dark:border-white/20 dark:bg-white/16 dark:text-white/85';
@@ -239,10 +230,10 @@ function DashboardCard({
   children,
 }: DashboardCardProps) {
   return (
-    <section data-screenshot-lock="true" className={`group ${surfaceClassName} transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(15,23,42,0.08)] dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.26)] ${className}`}>
+    <section className={`group ${surfaceClassName} transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(15,23,42,0.08)] dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.26)] ${className}`}>
       <div
         aria-hidden="true"
-        className={`screenshot-soft-glow pointer-events-none absolute inset-0 rounded-[inherit] ${
+        className={`pointer-events-none absolute inset-0 rounded-[inherit] ${
           glowClassName || 'bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.58),transparent_46%),radial-gradient(circle_at_bottom_right,rgba(28,176,246,0.04),transparent_42%)] dark:bg-none'
         }`}
       />
@@ -589,7 +580,6 @@ export default function DuoDashApp({
   });
   const [animationsEnabled, setAnimationsEnabled] = useState(true);
   const [emojiIconMode, setEmojiIconMode] = useState<EmojiIconMode>(getInitialEmojiIconMode);
-  const [isScreenshotting, setIsScreenshotting] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastLoadedAt, setLastLoadedAt] = useState<number | null>(() => (initialUserData ? Date.now() : readStoredLoadedAt()));
   const [loading, setLoading] = useState(Boolean(initialUsername) && !initialUserData && !initialLoadError);
@@ -858,289 +848,6 @@ export default function DuoDashApp({
     setEmojiIconMode((current) => (current === 'emoji' ? 'svg' : 'emoji'));
   }
 
-  function getScreenshotFileName(): string {
-    const rawName = userData?.learningLanguage || 'dashboard';
-    const safeName = rawName.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'dashboard';
-    return `duoeye-${safeName}-${Date.now()}`;
-  }
-
-  function downloadScreenshotFile(file: ScreenshotFile, fileName: string): void {
-    const objectUrl = URL.createObjectURL(file.blob);
-    const link = document.createElement('a');
-    link.href = objectUrl;
-    link.download = `${fileName}.${file.extension}`;
-    link.target = '_blank';
-    link.rel = 'noopener';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    window.setTimeout(() => {
-      const isLikelyMobileBrowser = window.innerWidth < 1024 || navigator.maxTouchPoints > 0;
-      if (isLikelyMobileBrowser && document.visibilityState === 'visible') {
-        window.open(objectUrl, '_blank', 'noopener,noreferrer');
-      }
-    }, 160);
-
-    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
-  }
-
-  function waitForStableFrame(delayMs = 0): Promise<void> {
-    return new Promise((resolve) => {
-      const run = () => window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()));
-      if (delayMs <= 0) {
-        run();
-        return;
-      }
-
-      window.setTimeout(run, delayMs);
-    });
-  }
-
-  function lockScreenshotLayout(rootNode: HTMLElement): () => void {
-    const targets = new Set<HTMLElement>();
-    const selectors = ['[data-screenshot-lock="true"]', '.recharts-responsive-container', '.recharts-wrapper', '.recharts-surface'];
-
-    if (rootNode.matches('[data-screenshot-lock="true"]')) {
-      targets.add(rootNode);
-    }
-
-    selectors.forEach((selector) => {
-      rootNode.querySelectorAll(selector).forEach((node) => {
-        if (node instanceof HTMLElement) {
-          targets.add(node);
-        }
-      });
-    });
-
-    const snapshots = Array.from(targets).map((node) => ({
-      node,
-      style: node.getAttribute('style'),
-      width: Math.ceil(node.getBoundingClientRect().width),
-      height: Math.ceil(node.getBoundingClientRect().height),
-    }));
-
-    snapshots.forEach(({ node, width, height }) => {
-      if (!width || !height) return;
-
-      node.style.width = `${width}px`;
-      node.style.minWidth = `${width}px`;
-      node.style.maxWidth = `${width}px`;
-      node.style.height = `${height}px`;
-      node.style.minHeight = `${height}px`;
-      node.style.maxHeight = `${height}px`;
-    });
-
-    return () => {
-      snapshots.forEach(({ node, style }) => {
-        if (style === null) {
-          node.removeAttribute('style');
-          return;
-        }
-
-        node.setAttribute('style', style);
-      });
-    };
-  }
-
-  function canvasToBlob(canvas: HTMLCanvasElement, type: 'image/png' | 'image/jpeg', quality?: number): Promise<Blob> {
-    return new Promise((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (blob) {
-          resolve(blob);
-          return;
-        }
-
-        reject(new Error('截图导出失败'));
-      }, type, quality);
-    });
-  }
-
-  function createScaledCanvas(sourceCanvas: HTMLCanvasElement, scale: number): HTMLCanvasElement {
-    if (scale === 1) return sourceCanvas;
-
-    const width = Math.max(1, Math.round(sourceCanvas.width * scale));
-    const height = Math.max(1, Math.round(sourceCanvas.height * scale));
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-
-    const context = canvas.getContext('2d');
-    if (!context) {
-      throw new Error('截图导出失败');
-    }
-
-    context.imageSmoothingEnabled = true;
-    context.imageSmoothingQuality = 'high';
-    context.drawImage(sourceCanvas, 0, 0, width, height);
-    return canvas;
-  }
-
-  function getScreenshotPixelRatio(captureWidth: number, captureHeight: number): number {
-    const viewportRatio = Math.max(window.devicePixelRatio || 1, 1);
-    const preferredRatio = Math.min(viewportRatio, SCREENSHOT_BASE_PIXEL_RATIO);
-    const area = Math.max(captureWidth * captureHeight, 1);
-    const areaLimitedRatio = Math.sqrt(MAX_SCREENSHOT_CANVAS_PIXELS / area);
-    return clamp(Math.min(preferredRatio, areaLimitedRatio), 1, SCREENSHOT_BASE_PIXEL_RATIO);
-  }
-
-  async function exportScreenshotWithinLimit(sourceCanvas: HTMLCanvasElement): Promise<ScreenshotFile> {
-    const basePng = await canvasToBlob(sourceCanvas, 'image/png');
-    if (basePng.size <= MAX_SCREENSHOT_BYTES) {
-      return { blob: basePng, extension: 'png' };
-    }
-
-    const estimatedScale = clamp(Math.sqrt(MAX_SCREENSHOT_BYTES / basePng.size) * 0.96, 0.45, 0.92);
-    const scaledCanvas = createScaledCanvas(sourceCanvas, estimatedScale);
-    const scaledPng = await canvasToBlob(scaledCanvas, 'image/png');
-    if (scaledPng.size <= MAX_SCREENSHOT_BYTES) {
-      return { blob: scaledPng, extension: 'png' };
-    }
-
-    const jpegBlob = await canvasToBlob(scaledCanvas, 'image/jpeg', 0.86);
-    if (jpegBlob.size <= MAX_SCREENSHOT_BYTES) {
-      return { blob: jpegBlob, extension: 'jpg' };
-    }
-
-    const fallbackScale = clamp(estimatedScale * 0.86, 0.36, 0.84);
-    const fallbackCanvas = createScaledCanvas(sourceCanvas, fallbackScale);
-    const fallbackBlob = await canvasToBlob(fallbackCanvas, 'image/jpeg', 0.78);
-
-    return { blob: fallbackBlob, extension: 'jpg' };
-  }
-
-  function identifyDeviceType(): 'mobile' | 'tablet' | 'laptop' | 'desktop' {
-    const width = window.innerWidth;
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-    if (width < 768) return 'mobile';
-    if (width < 1024) return 'tablet';
-    if (width <= 1536) return 'laptop';
-    return isTouch ? 'tablet' : 'desktop';
-  }
-
-  function getStandardizedCaptureDimensions(currentWidth: number, type: 'mobile' | 'tablet' | 'laptop' | 'desktop') {
-    if (type === 'mobile') {
-      return { width: currentWidth < 414 ? 393 : 430 };
-    }
-    if (type === 'tablet') {
-      return { width: 768 };
-    }
-    if (type === 'laptop') {
-      return { width: currentWidth };
-    }
-    return { width: Math.min(currentWidth, 1560) };
-  }
-
-  async function handleScreenshot(): Promise<void> {
-    if (!userData || !pageRef.current || isScreenshotting) return;
-
-    const root = document.documentElement;
-    const pageNode = pageRef.current;
-    const fileName = getScreenshotFileName();
-    const hadAnimationsDisabled = root.classList.contains('animations-off');
-    const hadScreenshotMode = root.classList.contains('screenshot-mode');
-
-    // 识别并计算标准化尺寸
-    const deviceType = identifyDeviceType();
-    const { width: targetWidth } = getStandardizedCaptureDimensions(window.innerWidth, deviceType);
-
-    try {
-      root.classList.add('animations-off');
-      root.classList.add('screenshot-mode');
-      setIsScreenshotting(true);
-
-      // --- [鲁棒性增强: 原始样式备份序列] ---
-      const originalPageStyle = pageNode.getAttribute('style');
-      const navbar = document.querySelector('[data-floating-navbar="true"]') as HTMLElement | null;
-      const originalNavbarStyle = navbar?.getAttribute('style') || null;
-
-      // 临时应用标准化宽度以触发布局重绘
-      pageNode.style.width = `${targetWidth}px`;
-      pageNode.style.minWidth = `${targetWidth}px`;
-      pageNode.style.maxWidth = `${targetWidth}px`;
-      pageNode.style.margin = '0 auto';
-      pageNode.style.position = 'relative';
-
-      // 统一处理导航栏位置：强制使用 absolute 定位并居中，解决在 fixed 定位下截图产生的偏移问题
-      if (navbar) {
-        navbar.style.position = 'absolute';
-        navbar.style.width = `${targetWidth}px`;
-        navbar.style.left = '50%';
-        navbar.style.right = 'auto';
-        navbar.style.transform = 'translateX(-50%)';
-      }
-
-      // 等待布局和图片资源稳定
-      await waitForStableFrame(500);
-
-      // 在标准化后的布局上通过 lockScreenshotLayout 锁定所有卡片尺寸
-      const unlockScreenshotLayout = lockScreenshotLayout(pageNode);
-      
-      // 重新测量高度：在目标宽度下的实际内容高度
-      const captureWidth = targetWidth;
-      const captureHeight = Math.ceil(pageNode.scrollHeight);
-      
-      // 智能识别笔记本高度：如果实际高度接近 941 或处于笔记本模式，优化输出比例
-      const finalCaptureHeight = (deviceType === 'laptop' && captureHeight < 1100) ? Math.max(captureHeight, 941) : captureHeight;
-
-      const pixelRatio = getScreenshotPixelRatio(captureWidth, finalCaptureHeight);
-      let screenshotFile: ScreenshotFile | null = null;
-
-      try {
-        const canvas = await toCanvas(pageNode, {
-          cacheBust: true,
-          pixelRatio,
-          skipAutoScale: true,
-          width: captureWidth,
-          height: finalCaptureHeight,
-          canvasWidth: Math.round(captureWidth * pixelRatio),
-          canvasHeight: Math.round(finalCaptureHeight * pixelRatio),
-          backgroundColor: root.classList.contains('dark') ? '#1c1c1e' : '#f5f5f7',
-          filter: (domNode) => !(domNode instanceof HTMLElement && domNode.dataset.screenshotIgnore === 'true'),
-          style: {
-            margin: '0',
-            width: `${captureWidth}px`,
-            minWidth: `${captureWidth}px`,
-            maxWidth: `${captureWidth}px`,
-            minHeight: `${finalCaptureHeight}px`,
-          },
-        });
-        screenshotFile = await exportScreenshotWithinLimit(canvas);
-      } finally {
-        unlockScreenshotLayout();
-        
-        // --- [鲁棒性增强: 样式完全恢复序列] ---
-        if (originalPageStyle === null) {
-          pageNode.removeAttribute('style');
-        } else {
-          pageNode.setAttribute('style', originalPageStyle);
-        }
-
-        if (navbar) {
-          if (originalNavbarStyle === null) {
-            navbar.removeAttribute('style');
-          } else {
-            navbar.setAttribute('style', originalNavbarStyle);
-          }
-        }
-      }
-
-      if (!screenshotFile) {
-        throw new Error('截图导出失败');
-      }
-
-      downloadScreenshotFile(screenshotFile, fileName);
-    } catch (error) {
-      console.error('Screenshot failed:', error);
-      window.alert('截图失败：' + (error instanceof Error ? error.message : '请刷新后重试。'));
-    } finally {
-      root.classList.toggle('animations-off', hadAnimationsDisabled);
-      root.classList.toggle('screenshot-mode', hadScreenshotMode);
-      window.setTimeout(() => setIsScreenshotting(false), 80);
-    }
-  }
-
   if (loading) {
     return (
       <EmojiModeProvider mode={emojiIconMode}>
@@ -1188,20 +895,8 @@ export default function DuoDashApp({
 
   return (
     <EmojiModeProvider mode={emojiIconMode}>
-      <div ref={pageRef} data-screenshot-root="true" data-screenshot-lock="true" className={`relative min-h-screen overflow-x-hidden bg-apple-gray1 dark:bg-apple-dark1 ${emojiIconMode === 'svg' ? 'duo-mode-svg' : ''}`}>
-        <div className={`screenshot-soft-glow pointer-events-none ${pageGlowBackgroundClassName}`} />
-
-      {isScreenshotting ? (
-        <div data-screenshot-ignore="true" className="fixed right-6 top-24 z-[70] rounded-[24px] border border-black/5 bg-white px-5 py-4 shadow-[0_18px_40px_rgba(15,23,42,0.12)] dark:border-white/10 dark:bg-[rgba(28,28,30,0.96)]">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border-4 border-black/8 border-t-[#58cc02] animate-spin dark:border-white/12 dark:border-t-[#58cc02]" />
-            <div>
-              <p className="text-sm font-semibold text-apple-dark1 dark:text-white">正在生成截图...</p>
-              <p className="mt-1 text-xs text-apple-gray6 dark:text-apple-dark6">已锁定颜色与布局</p>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <div ref={pageRef} className={`relative min-h-screen overflow-x-hidden bg-apple-gray1 dark:bg-apple-dark1 ${emojiIconMode === 'svg' ? 'duo-mode-svg' : ''}`}>
+        <div className={`pointer-events-none ${pageGlowBackgroundClassName}`} />
 
         <RenderBoundary
           label="导航栏"
@@ -1233,14 +928,12 @@ export default function DuoDashApp({
             resolvedTheme={resolvedTheme}
             animationsEnabled={animationsEnabled}
             emojiIconMode={emojiIconMode}
-            isScreenshotting={isScreenshotting}
             isRefreshing={isRefreshing}
             lastLoadedAt={lastLoadedAt}
             onThemeChange={handleThemeChange}
             onToggleAnimations={toggleAnimations}
             onToggleEmojiIconMode={toggleEmojiIconMode}
             onRefresh={reloadDashboardData}
-            onScreenshot={handleScreenshot}
             onLogout={() => {
               sessionStorage.removeItem(USERNAME_STORAGE_KEY);
               sessionStorage.removeItem(USERDATA_STORAGE_KEY);
@@ -1255,7 +948,7 @@ export default function DuoDashApp({
           />
         </RenderBoundary>
 
-        <main ref={contentRef} data-screenshot-lock="true" className="relative mx-auto max-w-[1560px] px-4 pb-10 pt-40 sm:px-6 sm:pt-32 lg:px-8 lg:pt-32">
+        <main ref={contentRef} className="relative mx-auto max-w-[1560px] px-4 pb-10 pt-40 sm:px-6 sm:pt-32 lg:px-8 lg:pt-32">
           <DashboardSections
             userData={userData}
             isLoaded={isLoaded}
@@ -1273,8 +966,8 @@ export default function DuoDashApp({
           />
         </main>
 
-        <footer className="render-isolate screenshot-solid-panel screenshot-disable-blur relative z-10 border-t border-black/5 bg-white/78 py-12 dark:border-white/10 dark:bg-[rgba(20,20,22,0.82)]">
-          <div data-screenshot-lock="true" className="mx-auto flex w-full max-w-[1560px] flex-col items-center overflow-visible px-4 text-center sm:px-6 lg:px-8">
+        <footer className="render-isolate relative z-10 border-t border-black/5 bg-white/78 py-12 dark:border-white/10 dark:bg-[rgba(20,20,22,0.82)]">
+          <div className="mx-auto flex w-full max-w-[1560px] flex-col items-center overflow-visible px-4 text-center sm:px-6 lg:px-8">
             <div className="flex items-center gap-1 overflow-visible py-1">
               <AppIcon className="h-11 w-11 shrink-0" />
               <DuoWordmark size="xs" className="shrink-0 overflow-visible" />

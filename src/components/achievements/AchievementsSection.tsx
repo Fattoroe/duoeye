@@ -177,7 +177,7 @@ export default function AchievementsSection({ userData }: AchievementsSectionPro
   }, [selectedAchievement]);
 
   return (
-    <div className="screenshot-solid-surface relative flex h-full flex-col overflow-hidden rounded-apple-xl border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,249,252,0.94))] p-6 shadow-[0_12px_28px_rgba(15,23,42,0.05)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_18px_36px_rgba(15,23,42,0.08)] max-[520px]:p-4 min-[768px]:max-[1023px]:mx-auto min-[768px]:max-[1023px]:max-w-[860px] min-[768px]:max-[1279px]:p-4 min-[768px]:max-[900px]:p-3.5 dark:border-transparent dark:[background-clip:border-box] dark:bg-[linear-gradient(180deg,rgba(58,58,60,0.92),rgba(28,28,30,0.96))] dark:shadow-none dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.24)]">
+    <div className="relative flex h-full flex-col overflow-hidden rounded-apple-xl border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,249,252,0.94))] p-6 shadow-[0_12px_28px_rgba(15,23,42,0.05)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_18px_36px_rgba(15,23,42,0.08)] max-[520px]:p-4 min-[768px]:max-[1023px]:mx-auto min-[768px]:max-[1023px]:max-w-[860px] min-[768px]:max-[1279px]:p-4 min-[768px]:max-[900px]:p-3.5 dark:border-transparent dark:[background-clip:border-box] dark:bg-[linear-gradient(180deg,rgba(58,58,60,0.92),rgba(28,28,30,0.96))] dark:shadow-none dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.24)]">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,200,0,0.16),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(244,114,182,0.08),transparent_48%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(255,200,0,0.2),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(244,114,182,0.14),transparent_46%)]"
@@ -197,7 +197,7 @@ export default function AchievementsSection({ userData }: AchievementsSectionPro
           <EmojiIcon symbol="⚡" className="text-[1.84rem] max-[520px]:text-[1.55rem] min-[1024px]:max-[1110px]:text-[1.62rem]" />
           <div>
             <div className="text-xs text-apple-gray6 max-[520px]:text-[11px]">单日最高经验</div>
-            <div className="text-xl font-bold text-duo-yellow max-[520px]:text-lg min-[768px]:max-[1279px]:text-lg">
+            <div className="text-xl font-bold text-duo-yellow max-[520px]:text-lg min-[768px]:max-[1279px]:text-lg whitespace-nowrap">
               {maxDailyXp.toLocaleString()} XP
             </div>
           </div>

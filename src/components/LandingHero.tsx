@@ -110,9 +110,9 @@ const averageXp = Math.round(totalXp / xpChartData.filter((item) => item.xp > 0)
 const floatingNavClassName =
   'mx-auto flex max-w-[1560px] items-center justify-between overflow-visible rounded-[28px] px-4 py-3.5 transition-[background-color,box-shadow] duration-300 sm:px-5';
 const sectionCardClassName =
-  'screenshot-solid-panel relative overflow-hidden rounded-[30px] border border-black/[0.06] dark:border-transparent bg-[rgba(255,255,255,0.9)] transition-[transform,background-color,filter] duration-300 will-change-transform hover:-translate-y-1 dark:bg-[rgba(44,44,46,0.92)]';
+  'relative overflow-hidden rounded-[30px] border border-black/[0.06] dark:border-transparent bg-[rgba(255,255,255,0.9)] transition-[transform,background-color,filter] duration-300 will-change-transform hover:-translate-y-1 dark:bg-[rgba(44,44,46,0.92)]';
 const sectionCardStaticClassName =
-  'screenshot-solid-panel relative overflow-hidden rounded-[30px] border border-black/[0.06] dark:border-transparent bg-[rgba(255,255,255,0.9)] transition-[transform,background-color,filter] duration-300 will-change-transform hover:-translate-y-1 dark:bg-[rgba(44,44,46,0.92)]';
+  'relative overflow-hidden rounded-[30px] border border-black/[0.06] dark:border-transparent bg-[rgba(255,255,255,0.9)] transition-[transform,background-color,filter] duration-300 will-change-transform hover:-translate-y-1 dark:bg-[rgba(44,44,46,0.92)]';
 const heroGlowClassName =
   'pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(88,204,2,0.12)_0%,transparent_58%),radial-gradient(ellipse_at_bottom_right,rgba(28,176,246,0.1)_0%,transparent_70%),linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(248,249,252,0.95)_52%,rgba(242,245,249,0.92)_100%)] dark:bg-[radial-gradient(ellipse_at_top_left,rgba(88,204,2,0.2)_0%,transparent_56%),radial-gradient(ellipse_at_bottom_right,rgba(28,176,246,0.18)_0%,transparent_68%),linear-gradient(180deg,rgba(58,58,60,0.96)_0%,rgba(40,40,42,0.95)_52%,rgba(32,32,34,0.98)_100%)]';
 const overviewGlowClassName =

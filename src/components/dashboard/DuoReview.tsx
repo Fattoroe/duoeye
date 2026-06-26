@@ -44,7 +44,7 @@ export default function DuoReview({ userData }: DuoReviewProps) {
   }, [fetchAnalysis]);
 
   return (
-    <section className="screenshot-solid-surface h-full flex flex-col group relative overflow-hidden rounded-apple-xl border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,249,252,0.94))] p-6 shadow-[0_12px_28px_rgba(15,23,42,0.05)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_18px_36px_rgba(15,23,42,0.09)] dark:border-transparent dark:[background-clip:border-box] dark:bg-[linear-gradient(180deg,rgba(58,58,60,0.92),rgba(28,28,30,0.96))] dark:shadow-none dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.26)]">
+    <section className="h-full flex flex-col group relative overflow-hidden rounded-apple-xl border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,249,252,0.94))] p-6 shadow-[0_12px_28px_rgba(15,23,42,0.05)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_18px_36px_rgba(15,23,42,0.09)] dark:border-transparent dark:[background-clip:border-box] dark:bg-[linear-gradient(180deg,rgba(58,58,60,0.92),rgba(28,28,30,0.96))] dark:shadow-none dark:hover:shadow-[0_18px_36px_rgba(0,0,0,0.26)]">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.14),transparent_44%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.1),transparent_48%)] opacity-90 transition-opacity duration-200 group-hover:opacity-100 dark:bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.2),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.16),transparent_46%)] dark:opacity-100"
@@ -75,7 +75,7 @@ export default function DuoReview({ userData }: DuoReviewProps) {
           </span>
         </div>
 
-        <div className="screenshot-solid-panel relative min-h-[160px] flex-1 flex flex-row items-start gap-5 rounded-[24px] border border-white/70 bg-white/88 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] transition-colors duration-200 group-hover:border-white/90 group-hover:bg-white/92 dark:border-transparent dark:[background-clip:border-box] dark:bg-white/6 dark:shadow-none dark:group-hover:bg-white/8">
+        <div className="relative min-h-[160px] flex-1 flex flex-row items-start gap-5 rounded-[24px] border border-white/70 bg-white/88 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] transition-colors duration-200 group-hover:border-white/90 group-hover:bg-white/92 dark:border-transparent dark:[background-clip:border-box] dark:bg-white/6 dark:shadow-none dark:group-hover:bg-white/8">
           <div className="flex-shrink-0">
             <div className="flex h-24 w-20 items-center justify-center rounded-[22px] border border-black/[0.03] bg-white p-2 shadow-[0_6px_16px_rgba(15,23,42,0.05)] dark:border-white/10 dark:bg-white/10 dark:shadow-none">
               <DuoMascot className={`h-16 w-16 ${loading ? 'animate-bounce' : ''}`} />
@@ -115,7 +115,7 @@ export default function DuoReview({ userData }: DuoReviewProps) {
           <button
             onClick={fetchAnalysis}
             disabled={loading}
-            className="inline-flex items-center rounded-full bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(17,24,39,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(17,24,39,0.2)] disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_20px_rgba(17,24,39,0.14)] dark:bg-white dark:text-apple-dark1"
+            className="inline-flex items-center whitespace-nowrap rounded-full bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(17,24,39,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(17,24,39,0.2)] disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_20px_rgba(17,24,39,0.14)] dark:bg-white dark:text-apple-dark1"
           >
             {loading ? '生成中...' : '刷新点评'}
           </button>

@@ -169,8 +169,8 @@ const { title } = Astro.props;
   }
 
   .deferred-section {
-    content-visibility: visible;
-    contain-intrinsic-size: auto;
+    content-visibility: auto;
+    contain-intrinsic-size: 960px;
   }
 
   html.animations-off {
@@ -201,73 +201,5 @@ const { title } = Astro.props;
   html.animations-off [class*='group-hover:translate'],
   html.animations-off [class*='group-hover:scale'] {
     transform: none !important;
-  }
-
-  html.screenshot-mode nav,
-  html.screenshot-mode footer,
-  html.screenshot-mode [class*='backdrop-blur'] {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
-  html.screenshot-mode,
-  html.screenshot-mode body {
-    background: #f5f5f7 !important;
-  }
-
-  html.dark.screenshot-mode,
-  html.dark.screenshot-mode body {
-    background: #1c1c1e !important;
-  }
-
-  html.screenshot-mode nav {
-    background: rgba(255, 255, 255, 0.96) !important;
-    border-color: rgba(255, 255, 255, 0.92) !important;
-  }
-
-  html.dark.screenshot-mode nav {
-    background: rgba(44, 44, 46, 0.96) !important;
-    border-color: rgba(255, 255, 255, 0.14) !important;
-  }
-
-  html.screenshot-mode footer {
-    background: rgba(255, 255, 255, 0.92) !important;
-  }
-
-  html.dark.screenshot-mode footer {
-    background: rgba(20, 20, 22, 0.92) !important;
-  }
-
-  html.screenshot-mode .screenshot-solid-surface {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 249, 252, 0.98)) !important;
-    border-color: rgba(255, 255, 255, 0.9) !important;
-  }
-
-  html.dark.screenshot-mode .screenshot-solid-surface {
-    background: linear-gradient(180deg, rgba(58, 58, 60, 0.98), rgba(28, 28, 30, 0.98)) !important;
-    border-color: rgba(255, 255, 255, 0.12) !important;
-  }
-
-  html.screenshot-mode .screenshot-solid-panel {
-    background: rgba(255, 255, 255, 0.94) !important;
-    border-color: rgba(255, 255, 255, 0.88) !important;
-  }
-
-  html.dark.screenshot-mode .screenshot-solid-panel {
-    background: rgba(44, 44, 46, 0.92) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-  }
-
-  html.screenshot-mode .screenshot-disable-blur {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
-  html.screenshot-mode .screenshot-soft-glow {
-    opacity: 0.78 !important;
-  }
-
-  html.screenshot-mode .secondary-stat-value {
-    white-space: nowrap !important;
   }
 </style>

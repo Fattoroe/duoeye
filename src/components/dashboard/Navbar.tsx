@@ -5,7 +5,6 @@ import ThemeModeControl from '../shared/ThemeModeControl';
 import type { EmojiIconMode } from '../icons/EmojiMode';
 import type { ResolvedTheme, ThemeMode } from '../../utils/theme';
 import {
-  CameraIcon,
   EmojiModeIcon,
   ExitIcon,
   MenuIcon,
@@ -23,14 +22,12 @@ interface NavbarProps {
   resolvedTheme: ResolvedTheme;
   animationsEnabled: boolean;
   emojiIconMode: EmojiIconMode;
-  isScreenshotting: boolean;
   isRefreshing: boolean;
   lastLoadedAt: number | null;
   onThemeChange: (mode: ThemeMode) => void;
   onToggleAnimations: () => void;
   onToggleEmojiIconMode: () => void;
   onRefresh: () => void;
-  onScreenshot: () => void;
   onLogout: () => void;
 }
 
@@ -46,7 +43,7 @@ const groupedIconButtonClassName =
 const compactMenuItemClassName =
   'flex min-h-[68px] flex-col items-center justify-center rounded-[24px] border border-black/5 bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(248,249,252,0.92))] px-2 py-2 text-center shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(15,23,42,0.08)] xs:px-2.5 sm:px-4 dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(58,58,60,0.72),rgba(34,34,36,0.9))] dark:hover:shadow-[0_16px_28px_rgba(0,0,0,0.2)]';
 
-function getNavbarActionIconClassName(variant: 'refresh' | 'sparkle' | 'pause' | 'camera' | 'emoji' | 'exit'): string {
+function getNavbarActionIconClassName(variant: 'refresh' | 'sparkle' | 'pause' | 'emoji' | 'exit'): string {
   const base = 'h-4 w-4 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform';
 
   if (variant === 'refresh') {
@@ -57,7 +54,7 @@ function getNavbarActionIconClassName(variant: 'refresh' | 'sparkle' | 'pause' |
     return `${base} group-hover:-translate-y-0.5 group-hover:rotate-12`;
   }
 
-  if (variant === 'camera' || variant === 'emoji') {
+  if (variant === 'emoji') {
     return `${base} group-hover:-translate-y-0.5 group-hover:rotate-6`;
   }
 
@@ -82,14 +79,12 @@ export default function Navbar({
   resolvedTheme,
   animationsEnabled,
   emojiIconMode,
-  isScreenshotting,
   isRefreshing,
   lastLoadedAt,
   onThemeChange,
   onToggleAnimations,
   onToggleEmojiIconMode,
   onRefresh,
-  onScreenshot,
   onLogout,
 }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -241,24 +236,6 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
 
             <button
               type="button"
-              onClick={onScreenshot}
-              disabled={isScreenshotting}
-              className={`${iconButtonClassName} disabled:cursor-not-allowed disabled:opacity-55`}
-              title={isScreenshotting ? '正在截图' : '截图'}
-              aria-label={isScreenshotting ? '正在截图' : '截图'}
-            >
-              {isScreenshotting ? (
-                <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" className="opacity-25" />
-                  <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="opacity-90" />
-                </svg>
-              ) : (
-                <CameraIcon className={getNavbarActionIconClassName('camera')} />
-              )}
-            </button>
-
-            <button
-              type="button"
               onClick={onToggleEmojiIconMode}
               className={iconButtonClassName}
               title={emojiIconMode === 'svg' ? '切换到 Emoji 图标' : '切换到 SVG 图标'}
@@ -392,23 +369,6 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                 )}
               </button>
 
-              <button
-                type="button"
-                onClick={onScreenshot}
-                disabled={isScreenshotting}
-                className={groupedIconButtonClassName}
-                title={isScreenshotting ? '正在截图' : '截图'}
-                aria-label={isScreenshotting ? '正在截图' : '截图'}
-              >
-                {isScreenshotting ? (
-                  <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" className="opacity-25" />
-                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="opacity-90" />
-                  </svg>
-                ) : (
-                  <CameraIcon className={getNavbarActionIconClassName('camera')} />
-                )}
-              </button>
             </div>
           </div>
 
@@ -445,7 +405,7 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                 setIsCompactMenuOpen(false);
               }}
               disabled={isRefreshing}
-              className={`${compactMenuItemClassName} col-span-2 disabled:cursor-not-allowed disabled:opacity-55`}
+              className={`${compactMenuItemClassName} col-span-3 disabled:cursor-not-allowed disabled:opacity-55`}
             >
               <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
                 {isRefreshing ? (
@@ -466,7 +426,7 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                 onToggleAnimations();
                 setIsCompactMenuOpen(false);
               }}
-              className={`${compactMenuItemClassName} col-span-2`}
+              className={`${compactMenuItemClassName} col-span-3`}
             >
               <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
                 {animationsEnabled ? <SparkleIcon className="h-4 w-4" /> : <PauseIcon className="h-4 w-4" />}
@@ -480,34 +440,12 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                 onToggleEmojiIconMode();
                 setIsCompactMenuOpen(false);
               }}
-              className={`${compactMenuItemClassName} col-span-2`}
+              className={`${compactMenuItemClassName} col-span-3`}
             >
               <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
                 <EmojiModeIcon className="h-4 w-4" />
               </div>
               <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">图标</div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                onScreenshot();
-                setIsCompactMenuOpen(false);
-              }}
-              disabled={isScreenshotting}
-              className={`${compactMenuItemClassName} col-span-3 disabled:cursor-not-allowed disabled:opacity-55`}
-            >
-              <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
-                {isScreenshotting ? (
-                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" className="opacity-25" />
-                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="opacity-90" />
-                  </svg>
-                ) : (
-                  <CameraIcon className="h-4 w-4" />
-                )}
-              </div>
-              <div className="mt-1 text-[12px] font-semibold tracking-tight text-apple-dark1 max-[430px]:text-[11px] dark:text-white">截图</div>
             </button>
 
             <button
