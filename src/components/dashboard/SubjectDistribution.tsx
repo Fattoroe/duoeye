@@ -87,9 +87,6 @@ export default function SubjectDistribution({ courses, totalXp }: SubjectDistrib
                       ({formatCompactMinutes(timeMinutes)})
                     </span>
                   </span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-apple-gray6 dark:text-apple-dark6">
-                    Total XP (Time)
-                  </span>
                 </div>
                 <div className="flex flex-col items-end text-right">
                   <span className="flex items-baseline gap-1">
@@ -99,9 +96,6 @@ export default function SubjectDistribution({ courses, totalXp }: SubjectDistrib
                     <span className="text-[11px] font-medium text-apple-gray6 dark:text-apple-dark6">
                       ({formatSharePercentage(timePercentage)})
                     </span>
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-apple-gray6 dark:text-apple-dark6">
-                    Share (Time)
                   </span>
                 </div>
               </div>
