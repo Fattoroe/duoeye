@@ -405,7 +405,7 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                 setIsCompactMenuOpen(false);
               }}
               disabled={isRefreshing}
-              className={`${compactMenuItemClassName} col-span-3 disabled:cursor-not-allowed disabled:opacity-55`}
+              className={`${compactMenuItemClassName} col-span-2 disabled:cursor-not-allowed disabled:opacity-55`}
             >
               <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
                 {isRefreshing ? (
@@ -426,7 +426,7 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                 onToggleAnimations();
                 setIsCompactMenuOpen(false);
               }}
-              className={`${compactMenuItemClassName} col-span-3`}
+              className={`${compactMenuItemClassName} col-span-2`}
             >
               <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
                 {animationsEnabled ? <SparkleIcon className="h-4 w-4" /> : <PauseIcon className="h-4 w-4" />}
@@ -440,7 +440,7 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                 onToggleEmojiIconMode();
                 setIsCompactMenuOpen(false);
               }}
-              className={`${compactMenuItemClassName} col-span-3`}
+              className={`${compactMenuItemClassName} col-span-2`}
             >
               <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
                 <EmojiModeIcon className="h-4 w-4" />
@@ -454,7 +454,7 @@ const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
                 onLogout();
                 setIsCompactMenuOpen(false);
               }}
-              className={`${compactMenuItemClassName} col-span-3`}
+              className={`${compactMenuItemClassName} col-span-6`}
             >
               <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[15px] border border-black/5 bg-white/92 text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] max-[430px]:h-7 max-[430px]:w-7 max-[430px]:rounded-[14px] dark:border-white/10 dark:bg-white/10 dark:text-white">
                 <ExitIcon className="h-4 w-4" />
