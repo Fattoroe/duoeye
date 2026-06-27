@@ -73,6 +73,7 @@ function HeatmapChart({
   const tooltipRef = useRef<HTMLDivElement>(null);
   const tooltipFrameRef = useRef<number | null>(null);
   const yearPanelRef = useRef<HTMLDivElement>(null);
+  const activeCellRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setTooltip(null);
@@ -259,7 +260,11 @@ function HeatmapChart({
   const halfControls = viewMode === 'half' ? [1, 2] : [];
 
   const updateTooltipPosition = useCallback((dateStr: string, xp: number, time?: number, transitionMs = 180) => {
-    const cell = document.querySelector(`[data-heatmap-date="${dateStr}"]`) as HTMLElement | null;
+    let cell = activeCellRef.current;
+    if (!cell || cell.getAttribute('data-heatmap-date') !== dateStr) {
+      cell = document.querySelector(`[data-heatmap-date="${dateStr}"]`) as HTMLElement | null;
+      activeCellRef.current = cell;
+    }
     if (!cell) return;
 
     const rect = cell.getBoundingClientRect();
@@ -313,6 +318,7 @@ function HeatmapChart({
   function handleDayClick(day: HeatmapDay, event: MouseEvent<HTMLDivElement>): void {
     event.preventDefault();
     if (day.xp < 0 || !day.dateStr) return;
+    activeCellRef.current = event.currentTarget;
     updateTooltipPosition(day.dateStr, day.xp, day.time, 180);
   }
 
@@ -334,6 +340,9 @@ function HeatmapChart({
     const nextDateStr = toLocalDateStr(nextDate, timeZone);
     const nextDay = allDates.find((item) => item.dateStr === nextDateStr);
     if (!nextDay) return;
+
+    const cell = document.querySelector(`[data-heatmap-date="${nextDateStr}"]`) as HTMLElement | null;
+    activeCellRef.current = cell;
 
     updateTooltipPosition(nextDateStr, nextDay.xp, nextDay.time, 180);
   }
