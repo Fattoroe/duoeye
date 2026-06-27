@@ -1,5 +1,4 @@
 import { useId } from 'react';
-import { useEmojiIconMode } from './EmojiMode';
 
 interface IconProps {
   className?: string;
@@ -160,11 +159,10 @@ export function ExitIcon({ className = 'h-4 w-4' }: IconProps) {
 
 export function EmojiModeIcon({ className = 'h-4 w-4' }: IconProps) {
   const id = useId().replace(/:/g, '');
-  const mode = useEmojiIconMode();
 
   return (
-    <div className={`${className} relative flex items-center justify-center`}>
-      <svg className={`${mode === 'emoji' ? 'block' : 'hidden'} duo-emoji-native absolute inset-0 h-full w-full`} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <div className={`${className} shrink-0 flex items-center justify-center`}>
+      <svg className="duo-emoji-native h-full w-full" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <defs>
           <linearGradient id={`${id}-g1`} x1="4" y1="4" x2="20" y2="20">
             <stop stopColor="#FFF48A" />
@@ -176,7 +174,7 @@ export function EmojiModeIcon({ className = 'h-4 w-4' }: IconProps) {
         <circle cx="15.5" cy="10" r="1.15" fill="#1E293B" />
         <path d="M8.2 14.3c.9 1.4 2.3 2.1 3.8 2.1s2.9-.7 3.8-2.1" stroke="#1E293B" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
-      <svg className={`${mode === 'svg' ? 'block' : 'hidden'} duo-emoji-svg absolute inset-0 h-full w-full`} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <svg className="duo-emoji-svg h-full w-full" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <defs>
           <linearGradient id={`${id}-g2`} x1="4" y1="4" x2="20" y2="20">
             <stop stopColor="#7ADFFF" />
