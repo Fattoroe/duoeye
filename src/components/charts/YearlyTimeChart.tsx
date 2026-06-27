@@ -11,9 +11,10 @@ import {
 
 interface YearlyTimeChartProps {
   data: Array<{ date: string; xp: number; time?: number }>;
+  isDark?: boolean;
 }
 
-function YearlyTimeChart({ data }: YearlyTimeChartProps) {
+function YearlyTimeChart({ data, isDark: isDarkProp }: YearlyTimeChartProps) {
   const yearlyData = useMemo(() => {
     const yearMap = new Map<string, number>();
 
@@ -34,7 +35,7 @@ function YearlyTimeChart({ data }: YearlyTimeChartProps) {
     return hours > 0 ? `${hours}小时${minutes}分钟` : `${minutes}分钟`;
   }, [totalTime]);
 
-  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+  const isDark = isDarkProp ?? (typeof document !== 'undefined' && document.documentElement.classList.contains('dark'));
 
   if (yearlyData.length === 0) {
     return (

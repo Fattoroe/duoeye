@@ -174,6 +174,7 @@ interface DashboardSectionsProps {
   onSelectWeeklyXpRangeMode: (mode: WeeklyRangeMode) => void;
   onSelectWeeklyTimeRangeMode: (mode: WeeklyRangeMode) => void;
   animated?: boolean;
+  resolvedTheme?: ResolvedTheme;
 }
 
 const surfaceClassName =
@@ -278,6 +279,7 @@ function DashboardSections({
   onSelectWeeklyXpRangeMode,
   onSelectWeeklyTimeRangeMode,
   animated = true,
+  resolvedTheme,
 }: DashboardSectionsProps) {
   const registrationYear = (() => {
     const m = userData.creationDate?.match(/(\d{4})/);
@@ -475,6 +477,7 @@ function DashboardSections({
                 selectedYear={selectedMonthlyYear}
                 viewMode={monthlyViewMode}
                 metric={monthlyMetric}
+                isDark={resolvedTheme === 'dark'}
               />
             </DashboardCard>
 
@@ -486,7 +489,7 @@ function DashboardSections({
               badge="经验"
               badgeClassName="inline-flex items-center rounded-full bg-[#a572f7]/10 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-[#7b4bc2] dark:bg-[#a572f7]/15 dark:text-[#d6b8ff]"
             >
-              <YearlyChart data={userData.yearlyXpHistory || []} />
+              <YearlyChart data={userData.yearlyXpHistory || []} isDark={resolvedTheme === 'dark'} />
             </DashboardCard>
  
             <DashboardCard
@@ -497,7 +500,7 @@ function DashboardSections({
               badge="分钟"
               badgeClassName="inline-flex items-center rounded-full bg-[#ff9600]/10 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-[#c47505] dark:bg-[#ff9600]/15 dark:text-[#ffd39a]"
             >
-              <YearlyTimeChart data={userData.yearlyXpHistory || []} />
+              <YearlyTimeChart data={userData.yearlyXpHistory || []} isDark={resolvedTheme === 'dark'} />
             </DashboardCard>
           </div>
         </div>
@@ -963,6 +966,7 @@ export default function DuoDashApp({
             onSelectRollingMonths={() => setMonthlyViewMode('rolling12')}
             onSelectWeeklyXpRangeMode={setWeeklyXpRangeMode}
             onSelectWeeklyTimeRangeMode={setWeeklyTimeRangeMode}
+            resolvedTheme={resolvedTheme}
           />
         </main>
 

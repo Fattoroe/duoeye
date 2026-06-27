@@ -14,6 +14,7 @@ interface MonthlyChartProps {
   selectedYear?: string;
   viewMode?: 'year' | 'rolling12';
   metric?: 'xp' | 'time';
+  isDark?: boolean;
 }
 
 interface MonthlyChartPoint {
@@ -44,8 +45,9 @@ function MonthlyChart({
   selectedYear,
   viewMode = 'year',
   metric = 'xp',
+  isDark: isDarkProp,
 }: MonthlyChartProps) {
-  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+  const isDark = isDarkProp ?? (typeof document !== 'undefined' && document.documentElement.classList.contains('dark'));
   const containerRef = useRef<HTMLDivElement>(null);
   const [chartWidth, setChartWidth] = useState(0);
   const isExtraNarrowScreen = chartWidth > 0 && chartWidth <= 425;

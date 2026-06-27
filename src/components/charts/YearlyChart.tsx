@@ -11,6 +11,7 @@ import {
 
 interface YearlyChartProps {
   data: Array<{ date: string; xp: number; time?: number }>;
+  isDark?: boolean;
 }
 
 interface YearData {
@@ -18,7 +19,7 @@ interface YearData {
   xp: number;
 }
 
-function YearlyChart({ data }: YearlyChartProps) {
+function YearlyChart({ data, isDark: isDarkProp }: YearlyChartProps) {
   const yearlyData = useMemo<YearData[]>(() => {
     const yearMap = new Map<string, number>();
 
@@ -36,7 +37,7 @@ function YearlyChart({ data }: YearlyChartProps) {
     return yearlyData.reduce((sum, item) => sum + item.xp, 0);
   }, [yearlyData]);
 
-  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+  const isDark = isDarkProp ?? (typeof document !== 'undefined' && document.documentElement.classList.contains('dark'));
 
   if (yearlyData.length === 0) {
     return (
