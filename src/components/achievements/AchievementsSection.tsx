@@ -236,7 +236,7 @@ export default function AchievementsSection({ userData }: AchievementsSectionPro
     if (!userData.yearlyXpHistory?.length) return '';
     let maxItem = userData.yearlyXpHistory[0];
     for (const item of userData.yearlyXpHistory) {
-      if ((item.xp || 0) > (maxItem.xp || 0)) {
+      if ((item.xp || 0) >= (maxItem.xp || 0)) {
         maxItem = item;
       }
     }
@@ -374,6 +374,7 @@ export default function AchievementsSection({ userData }: AchievementsSectionPro
           return (
             <button
               key={achievement.id}
+              id={`achievement-card-${achievement.id}`}
               onClick={() => setSelectedAchievement(achievement)}
               className={`group relative aspect-square overflow-hidden rounded-2xl border bg-white p-1 transition-transform duration-200 hover:scale-[1.02] max-[520px]:rounded-[18px] max-[520px]:p-0.5 min-[768px]:max-[1279px]:aspect-[1/0.82] min-[768px]:max-[1279px]:rounded-[18px] min-[768px]:max-[1279px]:p-0.5 min-[768px]:max-[900px]:aspect-[1/0.84] min-[768px]:max-[900px]:rounded-[18px] min-[768px]:max-[900px]:p-0.5 dark:bg-[#2c2c2e] ${
                 isUnlocked
@@ -423,6 +424,7 @@ export default function AchievementsSection({ userData }: AchievementsSectionPro
         <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-4">
           <div
             key={selectedAchievement.id}
+            id="achievement-detail-modal"
             ref={modalRef}
             className="pointer-events-auto relative w-[260px] animate-scale-in overflow-hidden rounded-3xl border border-white/60 bg-white/18 px-5 py-6 text-center shadow-[0_24px_58px_rgba(15,23,42,0.18)] backdrop-blur-xl transition-all duration-200 dark:border-white/20 dark:bg-[#2c2c2e]/24 dark:backdrop-blur-xl"
           >

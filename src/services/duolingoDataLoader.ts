@@ -6,7 +6,7 @@ const CACHE = new Map<string, { data: UserData; timestamp: number; dayKey: strin
 const CACHE_TTL = 5 * 60 * 1000;
 const CACHE_MAX_ENTRIES = 200;
 const DUOLINGO_BASE_URL = 'https://www.duolingo.com';
-const DUOLINGO_JWT = import.meta.env.DUOLINGO_TOKEN;
+const DUOLINGO_JWT = (typeof process !== 'undefined' ? process.env.DUOLINGO_TOKEN : '') || import.meta.env.DUOLINGO_TOKEN;
 
 export class DuolingoDataError extends Error {
   status: number;
@@ -101,6 +101,9 @@ export async function getDuolingoUserData(
 
   const cached = CACHE.get(cacheKey);
   if (cached && now - cached.timestamp < CACHE_TTL && cached.dayKey === currentDayKey) {
+    // LRU: Refresh insertion order by deleting and re-setting
+    CACHE.delete(cacheKey);
+    CACHE.set(cacheKey, cached);
     return cached.data;
   }
 
@@ -125,6 +128,14 @@ export async function getDuolingoUserData(
 
   if (v2Result.status === 401 || v2Result.status === 403) {
     throw new DuolingoDataError('该账号设置为私密，无法访问', 403);
+  }
+
+  if (v2Result.status === 429) {
+    throw new DuolingoDataError('请求过于频繁，多邻国暂时限制了访问，请稍后再试', 429);
+  }
+
+  if (v2Result.status >= 500) {
+    throw new DuolingoDataError('多邻国服务器暂时不可用，请稍后再试', 502);
   }
 
   const v2Raw = v2Result.data as { users?: any[] } | any;
@@ -210,6 +221,7 @@ export async function getDuolingoUserData(
 
   const transformed = transformDuolingoData(userData, timeZone);
   pruneCache(now);
+  CACHE.delete(cacheKey);
   CACHE.set(cacheKey, { data: transformed, timestamp: now, dayKey: currentDayKey });
   return transformed;
 }

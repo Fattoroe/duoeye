@@ -35,11 +35,11 @@ function getStartOfDayInTimezone(date: Date, timeZone: string = DEFAULT_TIMEZONE
     formatters.startOfDay.set(normalizedTimeZone, formatter);
   }
   const parts = formatter.formatToParts(date);
-  const offsetPart = parts.find(p => p.type === 'timeZoneName')?.value || '+08:00';
-  const offsetMatch = offsetPart.match(/GMT([+-])(\d+)(?::(\d+))?/);
+  const offsetPart = parts.find(p => p.type === 'timeZoneName')?.value || 'GMT+08:00';
+  const offsetMatch = offsetPart.match(/([+-])(\d+)(?::(\d+))?/);
   const offset = offsetMatch
     ? `${offsetMatch[1]}${offsetMatch[2].padStart(2, '0')}:${(offsetMatch[3] || '0').padStart(2, '0')}`
-    : '+08:00';
+    : '+00:00';
   return new Date(`${dateKey}T00:00:00${offset}`).getTime();
 }
 

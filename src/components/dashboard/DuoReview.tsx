@@ -87,6 +87,7 @@ export default function DuoReview({ userData }: DuoReviewProps) {
               <div className="space-y-3">
                 <p className="text-sm leading-7 text-apple-gray6 dark:text-apple-dark6">{error}</p>
                 <button
+                  id="btn-retry-review"
                   onClick={fetchAnalysis}
                   className="inline-flex items-center rounded-full border border-black/5 bg-white px-4 py-2 text-sm font-semibold text-apple-dark1 shadow-[0_4px_12px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/8 dark:text-white"
                 >
@@ -113,6 +114,7 @@ export default function DuoReview({ userData }: DuoReviewProps) {
 
         <div className="mt-5 flex justify-end">
           <button
+            id="btn-refresh-review"
             onClick={fetchAnalysis}
             disabled={loading}
             className="inline-flex items-center whitespace-nowrap rounded-full bg-[#111827] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(17,24,39,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(17,24,39,0.2)] disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_20px_rgba(17,24,39,0.14)] dark:bg-white dark:text-apple-dark1"

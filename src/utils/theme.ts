@@ -12,6 +12,7 @@ export function resolveThemeMode(value: string | null): ThemeMode {
 }
 
 export function getSystemTheme(): ResolvedTheme {
+  if (typeof window === 'undefined') return 'light';
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
