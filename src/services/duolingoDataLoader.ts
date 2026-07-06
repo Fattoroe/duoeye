@@ -108,23 +108,11 @@ export async function getDuolingoUserData(
   }
 
   const headers = createHeaders();
-  const [v2Result, v1Result, api1Result] = await Promise.all([
-    fetchWithTimeout(
-      `${DUOLINGO_BASE_URL}/2023-05-23/users?username=${encodeURIComponent(username)}`,
-      headers,
-      10000,
-    ),
-    fetchWithTimeout(
-      `${DUOLINGO_BASE_URL}/users/${encodeURIComponent(username)}`,
-      headers,
-      8000,
-    ),
-    fetchWithTimeout(
-      `${DUOLINGO_BASE_URL}/api/1/users/show?username=${encodeURIComponent(username)}`,
-      headers,
-      8000,
-    ),
-  ]);
+  const v2Result = await fetchWithTimeout(
+    `${DUOLINGO_BASE_URL}/2023-05-23/users?username=${encodeURIComponent(username)}`,
+    headers,
+    10000,
+  );
 
   if (v2Result.status === 401 || v2Result.status === 403) {
     throw new DuolingoDataError('该账号设置为私密，无法访问', 403);
@@ -140,20 +128,14 @@ export async function getDuolingoUserData(
 
   const v2Raw = v2Result.data as { users?: any[] } | any;
   const v2Data = v2Raw?.users?.[0] || v2Raw;
-  const v1Data = v1Result.data as any;
-  const api1Data = api1Result.data as any;
 
-  if (!v2Data && !v1Data && !api1Data) {
+  if (!v2Data) {
     throw new DuolingoDataError('找不到该用户，请检查用户名是否正确', 404);
   }
 
   const userData: any = {
-    ...(v1Data || {}),
-    ...(api1Data || {}),
     ...(v2Data || {}),
     tracking_properties: {
-      ...(v1Data?.tracking_properties || v1Data?.trackingProperties || {}),
-      ...(api1Data?.tracking_properties || api1Data?.trackingProperties || {}),
       ...(v2Data?.tracking_properties || v2Data?.trackingProperties || {}),
     },
   };

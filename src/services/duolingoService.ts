@@ -323,9 +323,7 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
   }
 
   const coursesXpSum = courses.reduce((sum, c) => sum + (c.xp || 0), 0);
-  if (totalXp === 0) {
-    totalXp = coursesXpSum;
-  }
+  totalXp = coursesXpSum;
 
   let learningLanguage = "None";
   if (rawData.language_data) {
@@ -378,9 +376,6 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
   // 1. Determine official total XP as the sum of daily histories (xpByDate)
   let totalXpSum = 0;
   xpByDate.forEach(xp => { totalXpSum += xp; });
-  if (totalXpSum > 0) {
-    totalXp = totalXpSum;
-  }
 
   // 2. Determine official total minutes as the sum of daily learning times (timeByDate)
   let totalMinutes = 0;
