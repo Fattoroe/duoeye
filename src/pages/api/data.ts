@@ -9,7 +9,13 @@ import { sanitizeTimeZone } from '../../utils/timezone';
 function jsonResponse(data: any, status: number, headers: Record<string, string> = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...headers },
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+      ...headers
+    },
   });
 }
 

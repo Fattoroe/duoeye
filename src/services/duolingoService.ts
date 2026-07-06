@@ -210,7 +210,7 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
     ?? rawData.gemsTotalCount ?? rawData.totalGems ?? rawData.gems
     ?? rawData.tracking_properties?.gems ?? rawData.lingots ?? rawData.rupees ?? 0;
 
-  let totalXp = rawData.total_xp ?? rawData.totalXp ?? 0;
+  let totalXp = rawData.totalXp ?? rawData.total_xp ?? 0;
 
   const dailyGoal = rawData.dailyGoal ?? rawData.daily_goal ?? rawData.xpGoal ?? 0;
   const creationTs = rawData.creation_date || rawData.creationDate;
@@ -323,7 +323,7 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
   }
 
   const coursesXpSum = courses.reduce((sum, c) => sum + (c.xp || 0), 0);
-  if (totalXp < coursesXpSum || totalXp === 0) {
+  if (totalXp === 0) {
     totalXp = coursesXpSum;
   }
 
@@ -363,7 +363,7 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
 
       const sessionTimeSeconds = summary.totalSessionTime ?? summary.total_session_time ?? 0;
       const minutes = Math.round(sessionTimeSeconds / 60);
-      timeByDate.set(dateKey, minutes > 0 ? minutes : Math.ceil(gainedXp / 3));
+      timeByDate.set(dateKey, minutes);
     }
   } else if (rawData.calendar?.length) {
     rawData.calendar.forEach(addCalendarEvent);
@@ -372,6 +372,28 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
       if (lang.calendar?.length) lang.calendar.forEach(addCalendarEvent);
     });
   }
+
+
+
+  // 1. Determine official total XP as the sum of daily histories (xpByDate)
+  let totalXpSum = 0;
+  xpByDate.forEach(xp => { totalXpSum += xp; });
+  if (totalXpSum > 0) {
+    totalXp = totalXpSum;
+  }
+
+  // 2. Determine official total minutes as the sum of daily learning times (timeByDate)
+  let totalMinutes = 0;
+  timeByDate.forEach(t => { totalMinutes += t; });
+  let hasRealTimeData = totalMinutes > 0;
+
+  // Fallback: if totalMinutes is 0, estimate it from totalXp
+  if (totalMinutes === 0 && totalXp > 0) {
+    totalMinutes = Math.ceil(totalXp / 3);
+    hasRealTimeData = true;
+  }
+
+
 
   const dailyXpHistory: { date: string; xp: number }[] = [];
   const dailyTimeHistory: { date: string; time: number }[] = [];
@@ -430,21 +452,7 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
   const hasItemPremium = rawAny.has_item_premium_subscription || rawAny.has_item_immersive_subscription;
   const isPlus = !!(rawData.hasPlus || rawData.hasSuper || rawData.plusStatus === 'active' || rawAny.has_plus || rawAny.is_plus || hasInventoryPremium || hasItemPremium);
 
-  let totalMinutes = 0;
-  let hasRealTimeData = false;
-  if (rawAny._xpSummaries?.length) {
-    const totalSeconds = rawAny._xpSummaries.reduce((acc: number, s: any) =>
-      acc + (s.totalSessionTime ?? s.total_session_time ?? 0), 0);
-    totalMinutes = Math.floor(totalSeconds / 60);
-    hasRealTimeData = totalSeconds > 0;
-  }
-
-  // If we don't have real-time data from summaries, or if courses have more time recorded
-  const coursesTimeMinutes = courses.reduce((sum, c) => sum + (c.timeSpent || 0), 0);
-  if (coursesTimeMinutes > totalMinutes) {
-    totalMinutes = coursesTimeMinutes;
-    hasRealTimeData = true;
-  }
+  // totalMinutes and hasRealTimeData are already calculated and calibrated above
 
   const estimatedLearningTime = hasRealTimeData
     ? `${Math.floor(totalMinutes / 60)}小时 ${totalMinutes % 60}分钟`

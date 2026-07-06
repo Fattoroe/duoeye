@@ -177,9 +177,11 @@ export default function LanguageDistribution({ courses, totalXp }: LanguageDistr
                       {course.xp.toLocaleString()}
                       <span className="ml-1 text-sm">XP</span>
                     </span>
-                    <span className="text-xs font-semibold tracking-normal text-apple-gray6 dark:text-apple-dark6">
-                      ({formatCompactMinutes(timeMinutes)})
-                    </span>
+                    {timeMinutes > 0 && (
+                      <span className="text-xs font-semibold tracking-normal text-apple-gray6 dark:text-apple-dark6">
+                        ({formatCompactMinutes(timeMinutes)})
+                      </span>
+                    )}
                   </span>
                 </div>
 
@@ -188,9 +190,11 @@ export default function LanguageDistribution({ courses, totalXp }: LanguageDistr
                     <span className="text-[13px] font-semibold" style={{ color }}>
                       {formatSharePercentage(percentage)}
                     </span>
-                    <span className="text-[11px] font-medium text-apple-gray6 dark:text-apple-dark6">
-                      ({formatSharePercentage(timePercentage)})
-                    </span>
+                    {timeMinutes > 0 && (
+                      <span className="text-[11px] font-medium text-apple-gray6 dark:text-apple-dark6">
+                        ({formatSharePercentage(timePercentage)})
+                      </span>
+                    )}
                   </span>
                 </div>
               </div>

@@ -711,6 +711,17 @@ export default function DuoDashApp({
 
           applyDashboardState(JSON.parse(storedUserData), storedLoadedAt);
           setLoading(false);
+
+          // Background refresh to keep the data updated in real-time
+          fetchDashboardData(activeUsername, controller.signal)
+            .then((nextUserData) => {
+              if (!isCancelled) {
+                persistDashboardState(nextUserData);
+              }
+            })
+            .catch((err) => {
+              console.error('Background refresh failed:', err);
+            });
           return;
         } catch {
           clearStoredDashboardState();

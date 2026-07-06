@@ -110,7 +110,7 @@ export async function getDuolingoUserData(
   const headers = createHeaders();
   const [v2Result, v1Result, api1Result] = await Promise.all([
     fetchWithTimeout(
-      `${DUOLINGO_BASE_URL}/2017-06-30/users?username=${encodeURIComponent(username)}`,
+      `${DUOLINGO_BASE_URL}/2023-05-23/users?username=${encodeURIComponent(username)}`,
       headers,
       10000,
     ),
@@ -169,12 +169,12 @@ export async function getDuolingoUserData(
     };
     const [xpResult, leaderboardResult, amebaResult] = await Promise.all([
       fetchWithTimeout(
-        `${DUOLINGO_BASE_URL}/2017-06-30/users/${userId}/xp_summaries?startDate=1970-01-01`,
+        `${DUOLINGO_BASE_URL}/2023-05-23/users/${userId}/xp_summaries?startDate=1970-01-01`,
         authHeaders,
         12000,
       ),
       fetchWithTimeout(
-        `${DUOLINGO_BASE_URL}/2017-06-30/users/${userId}/leaderboards?active=true`,
+        `${DUOLINGO_BASE_URL}/2023-05-23/users/${userId}/leaderboards?active=true`,
         authHeaders,
         10000,
       ),
