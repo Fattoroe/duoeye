@@ -161,7 +161,7 @@ export async function getDuolingoUserData(
         10000,
       ),
       fetchWithTimeout(
-        `${DUOLINGO_BASE_URL}/2023-05-23/users/${userId}?fields=courses,currentCourse,fromLanguage,learningLanguage,trackingProperties`,
+        `${DUOLINGO_BASE_URL}/2023-05-23/users/${userId}?fields=courses,currentCourse,fromLanguage,learningLanguage,trackingProperties,totalXp`,
         authHeaders,
         10000,
       ),
@@ -185,7 +185,7 @@ export async function getDuolingoUserData(
   } else if (userId) {
     // If no JWT, still try to fetch Ameba data (might be public)
     const amebaResult = await fetchWithTimeout(
-      `${DUOLINGO_BASE_URL}/2023-05-23/users/${userId}?fields=courses,currentCourse,fromLanguage,learningLanguage,trackingProperties`,
+      `${DUOLINGO_BASE_URL}/2023-05-23/users/${userId}?fields=courses,currentCourse,fromLanguage,learningLanguage,trackingProperties,totalXp`,
       headers,
       8000
     );

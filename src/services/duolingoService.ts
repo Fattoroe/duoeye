@@ -210,7 +210,7 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
     ?? rawData.gemsTotalCount ?? rawData.totalGems ?? rawData.gems
     ?? rawData.tracking_properties?.gems ?? rawData.lingots ?? rawData.rupees ?? 0;
 
-  let totalXp = rawData.totalXp ?? rawData.total_xp ?? 0;
+  let totalXp = rawAny._amebaData?.totalXp ?? rawData.totalXp ?? rawData.total_xp ?? 0;
 
   const dailyGoal = rawData.dailyGoal ?? rawData.daily_goal ?? rawData.xpGoal ?? 0;
   const creationTs = rawData.creation_date || rawData.creationDate;
@@ -323,7 +323,7 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
   }
 
   const coursesXpSum = courses.reduce((sum, c) => sum + (c.xp || 0), 0);
-  totalXp = coursesXpSum;
+  totalXp = Math.max(totalXp, coursesXpSum);
 
   let learningLanguage = "None";
   if (rawData.language_data) {
