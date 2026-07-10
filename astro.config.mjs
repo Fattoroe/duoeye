@@ -1,4 +1,4 @@
-// Trigger dev server restart - updated
+// Trigger dev server restart - total learning time updated
 import { defineConfig, passthroughImageService } from 'astro/config';
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';

@@ -75,7 +75,7 @@ export default function DuoReview({ userData }: DuoReviewProps) {
           </span>
         </div>
 
-        <div className="relative min-h-[160px] flex-1 flex flex-row items-start gap-5 rounded-[24px] border border-white/70 bg-white/88 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] transition-colors duration-200 group-hover:border-white/90 group-hover:bg-white/92 dark:border-transparent dark:[background-clip:border-box] dark:bg-white/6 dark:shadow-none dark:group-hover:bg-white/8">
+        <div className="relative min-h-[160px] flex-1 flex flex-row items-start gap-5 rounded-[24px] border border-white/70 bg-white/88 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] transition-colors duration-200 group-hover:border-white/90 group-hover:bg-white/92 dark:border-transparent dark:group-hover:border-transparent dark:[background-clip:border-box] dark:bg-white/6 dark:shadow-none dark:group-hover:bg-white/8">
           <div className="flex-shrink-0">
             <div className="flex h-24 w-20 items-center justify-center rounded-[22px] border border-black/[0.03] bg-white p-2 shadow-[0_6px_16px_rgba(15,23,42,0.05)] dark:border-white/10 dark:bg-white/10 dark:shadow-none">
               <DuoMascot className={`h-16 w-16 ${loading ? 'animate-bounce' : ''}`} />

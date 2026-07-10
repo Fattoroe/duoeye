@@ -377,10 +377,17 @@ export function transformDuolingoData(rawData: DuolingoRawUser, rawTimeZone: str
   let totalXpSum = 0;
   xpByDate.forEach(xp => { totalXpSum += xp; });
 
-  // 2. Determine official total minutes as the sum of daily learning times (timeByDate)
-  let totalMinutes = 0;
-  timeByDate.forEach(t => { totalMinutes += t; });
+  // 2. Determine official total minutes
+  const coursesTimeSum = courses.reduce((sum, c) => sum + (c.timeSpent || 0), 0);
+  let totalMinutes = coursesTimeSum;
   let hasRealTimeData = totalMinutes > 0;
+
+  if (!hasRealTimeData) {
+    let dailyTimeSum = 0;
+    timeByDate.forEach(t => { dailyTimeSum += t; });
+    totalMinutes = dailyTimeSum;
+    hasRealTimeData = totalMinutes > 0;
+  }
 
   // Fallback: if totalMinutes is 0, estimate it from totalXp
   if (totalMinutes === 0 && totalXp > 0) {

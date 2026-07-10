@@ -79,7 +79,7 @@ export default function TodayOverview({ userData }: TodayOverviewProps) {
     const items = [
       { label: '学习语言', value: userData.learningLanguage || '未知' },
       { label: '总经验', value: `${userData.totalXp.toLocaleString()} XP` },
-      { label: '总投入时间', value: userData.estimatedLearningTime || '暂无数据' },
+      { label: '总学习时间', value: userData.estimatedLearningTime || '暂无数据' },
       { label: '账户年龄', value: `${userData.accountAgeDays} 天` },
     ];
 
@@ -173,9 +173,9 @@ export default function TodayOverview({ userData }: TodayOverviewProps) {
             className="flex flex-col justify-start rounded-[22px] border border-white/60 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(246,247,250,0.92))] px-4 py-4 shadow-[0_4px_12px_rgba(15,23,42,0.03)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(15,23,42,0.06)] dark:border-transparent dark:[background-clip:border-box] dark:bg-[linear-gradient(180deg,rgba(72,72,74,0.96),rgba(44,44,46,0.98))] dark:shadow-none dark:hover:shadow-[0_14px_26px_rgba(0,0,0,0.22)]"
           >
             <div className="text-xs font-medium text-apple-gray6 dark:text-apple-dark6">{item.label}</div>
-            <div className={`mt-2 flex flex-col gap-0.5 xl:flex-row xl:items-baseline xl:justify-between xl:gap-1.5 text-lg font-semibold tracking-tight text-apple-dark1 dark:text-white ${item.label === '总投入时间' ? 'md:max-lg:whitespace-pre-line md:max-lg:leading-snug' : ''}`}>
+            <div className={`mt-2 flex flex-col gap-0.5 xl:flex-row xl:items-baseline xl:justify-between xl:gap-1.5 text-lg font-semibold tracking-tight text-apple-dark1 dark:text-white ${item.label === '总学习时间' ? 'md:max-lg:whitespace-pre-line md:max-lg:leading-snug' : ''}`}>
               <span className="secondary-stat-value lg:whitespace-nowrap">
-                {item.label === '总投入时间' ? (
+                {item.label === '总学习时间' ? (
                   <>
                     <span className="md:max-lg:hidden">{item.value}</span>
                     <span className="hidden md:max-lg:inline">{item.value.replace(' ', '\n')}</span>
