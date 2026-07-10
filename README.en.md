@@ -1,5 +1,7 @@
 # DuoEye
 
+English | [简体中文](./README.md)
+
 A Duolingo data analysis dashboard built with Astro + React, offering learning charts, achievement badges, AI insights, and dark mode support.
 
 ## Features

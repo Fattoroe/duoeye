@@ -1,5 +1,7 @@
 # DuoEye
 
+[English](./README.en.md) | 简体中文
+
 一个基于 Astro + React 的多邻国数据分析仪表盘，提供数据分析图表、徽章成就和 AI 学习点评。
 
 ## 功能特性
